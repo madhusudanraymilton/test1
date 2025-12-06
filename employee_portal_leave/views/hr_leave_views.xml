@@ -1,0 +1,44 @@
+<odoo>
+    <!--NEW -->
+    <!-- Add delegate and team leader fields to time off form view -->
+    <record id="hr_leave_view_form_inherit" model="ir.ui.view">
+        <field name="name">hr.leave.view.form.inherit</field>
+        <field name="model">hr.leave</field>
+        <field name="inherit_id" ref="hr_holidays.hr_leave_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='employee_id']" position="after">
+                <field name="delegate_employee_id" options="{'no_create': True, 'no_open': True}"/>
+                <field name="requires_team_leader_approval" invisible="1"/>
+                <field name="team_leader_approved" invisible="not requires_team_leader_approval"/>
+                <field name="team_leader_approved_by" invisible="not team_leader_approved"/>
+                <field name="team_leader_approved_date" invisible="not team_leader_approved"/>
+            </xpath>
+        </field>
+    </record>
+    <!--END NEW -->
+
+
+    <!-- Add delegate field to time off form view -->
+    <record id="hr_leave_view_form_inherit" model="ir.ui.view">
+        <field name="name">hr.leave.view.form.inherit</field>
+        <field name="model">hr.leave</field>
+        <field name="inherit_id" ref="hr_holidays.hr_leave_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="before">
+                <field name="delegate_employee_id" options="{'no_create': True, 'no_open': True}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Add delegate field to tree view -->
+    <record id="hr_leave_view_tree_inherit" model="ir.ui.view">
+        <field name="name">hr.leave.view.tree.inherit</field>
+        <field name="model">hr.leave</field>
+        <field name="inherit_id" ref="hr_holidays.hr_leave_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="before">
+                <field name="delegate_employee_id" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

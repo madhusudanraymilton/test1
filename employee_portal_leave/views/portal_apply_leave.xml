@@ -1,0 +1,493 @@
+<odoo>
+    <template id="portal_apply_leave" name="Apply Leave">
+        <t t-call="portal.portal_layout">
+            <t t-set="additional_title">Apply for Leave</t>
+
+            <div class="container my-5">
+                <div class="row">
+                    <div class="col-lg-8 offset-lg-2">
+                        <!-- Page Header -->
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div>
+                                <h2 class="mb-1">Apply for Leave</h2>
+                                <p class="text-muted mb-0">Submit your time-off request</p>
+                            </div>
+                            <a href="/my/leave/history" class="btn btn-outline-secondary">
+                                <i class="fa fa-history"/> View History
+                            </a>
+                        </div>
+
+                        <!-- Error Alert -->
+                        <t t-if="error">
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="fa fa-exclamation-circle"/> <strong>Error:</strong> <t t-esc="error"/>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"/>
+                            </div>
+                        </t>
+
+                        <!-- Success Alert -->
+                        <t t-if="success">
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <i class="fa fa-check-circle"/> <t t-esc="success"/>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"/>
+                            </div>
+                        </t>
+
+                        <!-- Leave Balance Cards -->
+                        <t t-if="leave_balances">
+                            <div class="row g-3 mb-4">
+                                <t t-foreach="leave_types[:4]" t-as="lt">
+                                    <div class="col-md-6 col-lg-3">
+                                        <div class="card border-0 shadow-sm h-100">
+                                            <div class="card-body text-center py-3">
+                                                <h6 class="text-muted mb-2 small" t-esc="lt.name"/>
+                                                <h3 class="mb-0 text-primary fw-bold">
+                                                    <t t-esc="leave_balances.get(lt.id, {}).get('remaining', 0)"/>
+                                                </h3>
+                                                <small class="text-muted">days remaining</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                        </t>
+
+                        <!-- Application Form -->
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body p-4">
+                                <form action="/my/leave/submit" method="post" enctype="multipart/form-data" id="leaveForm">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                                    <!-- Leave Type Selection -->
+                                    <div class="mb-4">
+                                        <label class="form-label fw-semibold">
+                                            <i class="fa fa-tag text-primary"/> Leave Type <span class="text-danger">*</span>
+                                        </label>
+                                        <select name="leave_type" id="leaveTypeSelect" class="form-select form-select-lg" required="required">
+                                            <option value="">-- Select Leave Type --</option>
+                                            <t t-foreach="leave_types" t-as="lt">
+                                                <option t-att-value="lt.id"
+                                                        t-att-data-balance="leave_balances.get(lt.id, {}).get('remaining', 0)"
+                                                        t-att-data-total="leave_balances.get(lt.id, {}).get('total', 0)"
+                                                        t-att-data-used="leave_balances.get(lt.id, {}).get('used', 0)">
+                                                    <t t-esc="lt.name"/>
+                                                </option>
+                                            </t>
+                                        </select>
+                                        <div id="balanceInfo" class="mt-2 p-3 bg-light rounded d-none">
+                                            <div class="row text-center">
+                                                <div class="col-4">
+                                                    <small class="text-muted d-block">Total</small>
+                                                    <strong id="totalDays" class="text-dark">0</strong>
+                                                </div>
+                                                <div class="col-4">
+                                                    <small class="text-muted d-block">Used</small>
+                                                    <strong id="usedDays" class="text-warning">0</strong>
+                                                </div>
+                                                <div class="col-4">
+                                                    <small class="text-muted d-block">Available</small>
+                                                    <strong id="remainingDays" class="text-success">0</strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Date Range -->
+                                    <div class="row mb-4">
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold">
+                                                <i class="fa fa-calendar text-primary"/> From Date <span class="text-danger">*</span>
+                                            </label>
+                                            <input type="date" name="date_from" id="dateFrom" class="form-control form-control-lg" required="required"/>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold">
+                                                <i class="fa fa-calendar text-primary"/> To Date <span class="text-danger">*</span>
+                                            </label>
+                                            <input type="date" name="date_to" id="dateTo" class="form-control form-control-lg" required="required"/>
+                                        </div>
+                                    </div>
+
+                                    <div id="durationInfo" class="mb-4 p-3 bg-info bg-opacity-10 rounded d-none">
+                                        <i class="fa fa-info-circle text-info"/> Duration: <strong id="durationDays">0</strong> days
+                                    </div>
+
+                                    <!-- Reason -->
+                                    <div class="mb-4">
+                                        <label class="form-label fw-semibold">
+                                            <i class="fa fa-comment text-primary"/> Reason for Leave <span class="text-danger">*</span>
+                                        </label>
+                                        <textarea name="reason" class="form-control" rows="4"
+                                                  placeholder="Please provide a detailed reason for your leave request..."
+                                                  required="required"/>
+                                    </div>
+
+                                    <!-- Delegation -->
+                                    <div class="mb-4">
+                                        <label class="form-label fw-semibold">
+                                            <i class="fa fa-user text-primary"/> Delegate Responsibilities To
+                                        </label>
+                                        <select name="delegate_employee_id" class="form-select">
+                                            <option value="">-- No Delegation --</option>
+                                            <t t-foreach="employees" t-as="emp">
+                                                <option t-att-value="emp.id">
+                                                    <t t-esc="emp.name"/> - <t t-esc="emp.barcode or ''"/>
+                                                </option>
+                                            </t>
+                                        </select>
+                                        <small class="form-text text-muted">
+                                            Optional: Select a colleague to handle your work during your absence
+                                        </small>
+                                    </div>
+
+                                    <!-- File Attachment -->
+                                    <div class="mb-4">
+                                        <label class="form-label fw-semibold">
+                                            <i class="fa fa-paperclip text-primary"/> Supporting Document
+                                        </label>
+                                        <input type="file" name="attachment" class="form-control"
+                                               accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" id="fileInput"/>
+                                        <small class="form-text text-muted">
+                                            Accepted formats: PDF, DOC, DOCX, JPG, JPEG, PNG (Max 5MB)
+                                        </small>
+                                        <div id="fileError" class="text-danger small mt-1 d-none"></div>
+                                    </div>
+
+                                    <!-- Form Actions -->
+                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4 pt-3 border-top">
+                                        <a href="/my/leave/history" class="btn btn-lg btn-outline-secondary">
+                                            <i class="fa fa-times"/> Cancel
+                                        </a>
+                                        <button type="submit" class="btn btn-lg btn-primary px-5" id="submitBtn">
+                                            <i class="fa fa-paper-plane"/> Submit Leave Request
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Help Section -->
+                        <div class="card border-0 bg-light mt-4">
+                            <div class="card-body">
+                                <h6 class="mb-3"><i class="fa fa-question-circle text-primary"/> Need Help?</h6>
+                                <ul class="mb-0 small">
+                                    <li>Ensure you have sufficient leave balance before applying</li>
+                                    <li>Leave requests are subject to manager approval</li>
+                                    <li>You'll receive email notifications on status changes</li>
+                                    <li>For urgent requests, please contact HR directly</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- JavaScript for form validation and interactivity -->
+            <!--
+            <script type="text/javascript">
+                document.addEventListener('DOMContentLoaded', function() {
+                    const leaveTypeSelect = document.getElementById('leaveTypeSelect');
+                    const dateFrom = document.getElementById('dateFrom');
+                    const dateTo = document.getElementById('dateTo');
+                    const balanceInfo = document.getElementById('balanceInfo');
+                    const durationInfo = document.getElementById('durationInfo');
+                    const fileInput = document.getElementById('fileInput');
+                    const fileError = document.getElementById('fileError');
+                    const form = document.getElementById('leaveForm');
+
+                    // Set minimum date to today
+                    const today = new Date().toISOString().split('T')[0];
+                    dateFrom.setAttribute('min', today);
+                    dateTo.setAttribute('min', today);
+
+                    // Show balance info when leave type is selected
+                    leaveTypeSelect.addEventListener('change', function() {
+                        const selectedOption = this.options[this.selectedIndex];
+                        if (this.value) {
+                            const total = selectedOption.getAttribute('data-total') || 0;
+                            const used = selectedOption.getAttribute('data-used') || 0;
+                            const remaining = selectedOption.getAttribute('data-balance') || 0;
+
+                            document.getElementById('totalDays').textContent = total;
+                            document.getElementById('usedDays').textContent = used;
+                            document.getElementById('remainingDays').textContent = remaining;
+                            balanceInfo.classList.remove('d-none');
+                        } else {
+                            balanceInfo.classList.add('d-none');
+                        }
+                        calculateDuration();
+                    });
+
+                    // Calculate duration when dates change
+                    dateFrom.addEventListener('change', function() {
+                        dateTo.setAttribute('min', this.value);
+                        calculateDuration();
+                    });
+
+                    dateTo.addEventListener('change', calculateDuration);
+
+                    function calculateDuration() {
+                        if (dateFrom.value &amp;&amp; dateTo.value) {
+                            const start = new Date(dateFrom.value);
+                            const end = new Date(dateTo.value);
+                            const diffTime = Math.abs(end - start);
+                            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+                            document.getElementById('durationDays').textContent = diffDays;
+                            durationInfo.classList.remove('d-none');
+
+                            // Check if duration exceeds balance
+                            const selectedOption = leaveTypeSelect.options[leaveTypeSelect.selectedIndex];
+                            if (selectedOption &amp;&amp; leaveTypeSelect.value) {
+                                const remaining = parseFloat(selectedOption.getAttribute('data-balance')) || 0;
+                                if (diffDays > remaining) {
+                                    durationInfo.classList.remove('bg-info', 'bg-opacity-10');
+                                    durationInfo.classList.add('bg-danger', 'bg-opacity-10');
+                                    durationInfo.innerHTML = '&lt;i class="fa fa-exclamation-triangle text-danger"&gt; Warning: Duration (' + diffDays + ' days) exceeds available balance (' + remaining + ' days)';
+                                } else {
+                                    durationInfo.classList.remove('bg-danger', 'bg-opacity-10');
+                                    durationInfo.classList.add('bg-info', 'bg-opacity-10');
+                                    durationInfo.innerHTML = '&lt;i class="fa fa-info-circle text-info"&gt; Duration: &lt;strong&gt;' + diffDays + '&lt;/strong&gt; days';
+                                }
+                            }
+                        } else {
+                            durationInfo.classList.add('d-none');
+                        }
+                    }
+
+                    // File validation
+                    fileInput.addEventListener('change', function() {
+                        const file = this.files[0];
+                        fileError.classList.add('d-none');
+
+                        if (file) {
+                            // Check file size (5MB = 5242880 bytes)
+                            if (file.size > 5242880) {
+                                fileError.textContent = 'File size exceeds 5MB limit';
+                                fileError.classList.remove('d-none');
+                                this.value = '';
+                                return;
+                            }
+
+                            // Check file type
+                            const allowedTypes = ['application/pdf', 'application/msword',
+                                                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                                                'image/jpeg', 'image/jpg', 'image/png'];
+                            if (!allowedTypes.includes(file.type)) {
+                                fileError.textContent = 'Invalid file type. Please upload PDF, DOC, DOCX, JPG, or PNG';
+                                fileError.classList.remove('d-none');
+                                this.value = '';
+                            }
+                        }
+                    });
+
+                    // Form submission
+                    form.addEventListener('submit', function(e) {
+                        const submitBtn = document.getElementById('submitBtn');
+                        submitBtn.disabled = true;
+                        submitBtn.innerHTML = '&lt;span class="spinner-border spinner-border-sm me-2"&gt; Submitting...';
+                    });
+                });
+            </script>
+            -->
+            <!-- JavaScript for form validation and interactivity -->
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        const leaveTypeSelect = document.getElementById('leaveTypeSelect');
+        const dateFrom = document.getElementById('dateFrom');
+        const dateTo = document.getElementById('dateTo');
+        const balanceInfo = document.getElementById('balanceInfo');
+        const durationInfo = document.getElementById('durationInfo');
+        const fileInput = document.getElementById('fileInput');
+        const fileError = document.getElementById('fileError');
+        const form = document.getElementById('leaveForm');
+
+        // Set minimum date to today
+        const today = new Date().toISOString().split('T')[0];
+        if (dateFrom) dateFrom.setAttribute('min', today);
+        if (dateTo) dateTo.setAttribute('min', today);
+
+        // Show balance info when leave type is selected
+        if (leaveTypeSelect) {
+            leaveTypeSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                if (this.value &amp;&amp; balanceInfo) {
+                    const total = selectedOption.getAttribute('data-total') || 0;
+                    const used = selectedOption.getAttribute('data-used') || 0;
+                    const remaining = selectedOption.getAttribute('data-balance') || 0;
+
+                    const totalDaysElem = document.getElementById('totalDays');
+                    const usedDaysElem = document.getElementById('usedDays');
+                    const remainingDaysElem = document.getElementById('remainingDays');
+
+                    if (totalDaysElem) totalDaysElem.textContent = total;
+                    if (usedDaysElem) usedDaysElem.textContent = used;
+                    if (remainingDaysElem) remainingDaysElem.textContent = remaining;
+
+                    balanceInfo.classList.remove('d-none');
+                } else if (balanceInfo) {
+                    balanceInfo.classList.add('d-none');
+                }
+                calculateDuration();
+            });
+        }
+
+        // Calculate duration when dates change
+        if (dateFrom) {
+            dateFrom.addEventListener('change', function() {
+                if (dateTo) dateTo.setAttribute('min', this.value);
+                calculateDuration();
+            });
+        }
+
+        if (dateTo) {
+            dateTo.addEventListener('change', calculateDuration);
+        }
+
+        function calculateDuration() {
+            if (!dateFrom || !dateTo || !durationInfo) return;
+
+            if (dateFrom.value &amp;&amp; dateTo.value) {
+                const start = new Date(dateFrom.value);
+                const end = new Date(dateTo.value);
+                const diffTime = Math.abs(end - start);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+                const durationDaysElem = document.getElementById('durationDays');
+
+                // Check if duration exceeds balance
+                if (leaveTypeSelect) {
+                    const selectedOption = leaveTypeSelect.options[leaveTypeSelect.selectedIndex];
+                    if (selectedOption &amp;&amp; leaveTypeSelect.value) {
+                        const remaining = parseFloat(selectedOption.getAttribute('data-balance')) || 0;
+                        if (diffDays &gt; remaining) {
+                            durationInfo.classList.remove('bg-info', 'bg-opacity-10');
+                            durationInfo.classList.add('bg-danger', 'bg-opacity-10');
+                            durationInfo.innerHTML = '&lt;i class="fa fa-exclamation-triangle text-danger"&gt;&lt;/i&gt; Warning: Duration (' + diffDays + ' days) exceeds available balance (' + remaining + ' days)';
+                        } else {
+                            durationInfo.classList.remove('bg-danger', 'bg-opacity-10');
+                            durationInfo.classList.add('bg-info', 'bg-opacity-10');
+                            durationInfo.innerHTML = '&lt;i class="fa fa-info-circle text-info"&gt;&lt;/i&gt; Duration: &lt;strong&gt;' + diffDays + '&lt;/strong&gt; days';
+                        }
+                    } else {
+                        // If no leave type selected, just show duration
+                        if (durationDaysElem) durationDaysElem.textContent = diffDays;
+                        durationInfo.classList.remove('bg-danger', 'bg-opacity-10');
+                        durationInfo.classList.add('bg-info', 'bg-opacity-10');
+                    }
+                }
+
+                durationInfo.classList.remove('d-none');
+            } else {
+                durationInfo.classList.add('d-none');
+            }
+        }
+
+        // File validation
+        if (fileInput &amp;&amp; fileError) {
+            fileInput.addEventListener('change', function() {
+                const file = this.files[0];
+                fileError.classList.add('d-none');
+
+                if (file) {
+                    // Check file size (5MB = 5242880 bytes)
+                    if (file.size &gt; 5242880) {
+                        fileError.textContent = 'File size exceeds 5MB limit';
+                        fileError.classList.remove('d-none');
+                        this.value = '';
+                        return;
+                    }
+
+                    // Check file type
+                    const allowedTypes = ['application/pdf', 'application/msword',
+                                        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                                        'image/jpeg', 'image/jpg', 'image/png'];
+                    if (!allowedTypes.includes(file.type)) {
+                        fileError.textContent = 'Invalid file type. Please upload PDF, DOC, DOCX, JPG, or PNG';
+                        fileError.classList.remove('d-none');
+                        this.value = '';
+                    }
+                }
+            });
+        }
+
+        // Form submission
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                const submitBtn = document.getElementById('submitBtn');
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '&lt;span class="spinner-border spinner-border-sm me-2"&gt;&lt;/span&gt; Submitting...';
+                }
+            });
+        }
+    });
+</script>
+
+            <style>
+                .form-select-lg, .form-control-lg {
+                    border-radius: 0.5rem;
+                }
+                .card {
+                    transition: transform 0.2s;
+                }
+                .card:hover {
+                    transform: translateY(-2px);
+                }
+                .form-label {
+                    margin-bottom: 0.5rem;
+                }
+                .shadow-sm {
+                    box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.075) !important;
+                }
+            </style>
+        </t>
+    </template>
+
+    <!-- Error Template -->
+    <template id="portal_error" name="Portal Error">
+        <t t-call="portal.portal_layout">
+            <div class="container my-5">
+                <div class="row">
+                    <div class="col-lg-6 offset-lg-3 text-center">
+                        <div class="card border-danger">
+                            <div class="card-body p-5">
+                                <i class="fa fa-exclamation-triangle fa-4x text-danger mb-4"/>
+                                <h3 class="mb-3">Something went wrong</h3>
+                                <p class="text-muted"><t t-esc="error"/></p>
+                                <a href="/my/leave/apply" class="btn btn-primary mt-3">
+                                    <i class="fa fa-arrow-left"/> Back to Leave Application
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- No Employee Template -->
+    <template id="portal_no_employee" name="No Employee Record">
+        <t t-call="portal.portal_layout">
+            <div class="container my-5">
+                <div class="row">
+                    <div class="col-lg-6 offset-lg-3 text-center">
+                        <div class="card border-warning">
+                            <div class="card-body p-5">
+                                <i class="fa fa-user-times fa-4x text-warning mb-4"/>
+                                <h3 class="mb-3">No Employee Record Found</h3>
+                                <p class="text-muted">
+                                    Your account is not linked to an employee record.
+                                    Please contact your HR department to resolve this issue.
+                                </p>
+                                <a href="/my/home" class="btn btn-primary mt-3">
+                                    <i class="fa fa-home"/> Go to Portal Home
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

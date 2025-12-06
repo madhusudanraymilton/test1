@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        HR Employee View Enhancements
+        - Allow HR admins to select portal users when creating employees
+        - Add button to manually create employee for portal users
+    -->
+
+    <!-- Remove user_id domain restriction in employee form -->
+    <record id="view_employee_form_portal_user_inherit" model="ir.ui.view">
+        <field name="name">hr.employee.form.portal.user.inherit</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='hr_settings']//field[@name='user_id']" position="attributes">
+                <attribute name="domain">[('active', '=', True)]</attribute>
+                <attribute name="context">{'default_create_employee_id': id}</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- new -->
+    <!-- ADD THIS NEW SECTION -->
+    <record id="view_employee_form_team_leader_inherit" model="ir.ui.view">
+        <field name="name">hr.employee.form.team.leader</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='parent_id']" position="after">
+                <field name="portal_team_leader_id" options="{'no_create': True}"/>
+            </xpath>
+        </field>
+    </record>
+    <!-- end new -->
+
+    <!-- Add "Create Employee Record" button on user form -->
+    <record id="res_users_form_portal_employee_inherit" model="ir.ui.view">
+        <field name="name">res.users.form.portal.employee</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_create_employee"
+                        string="Create Employee Record"
+                        type="object"
+                        class="btn-primary"
+                        groups="hr.group_hr_user"
+                        invisible="employee_id or not share"/>
+            </xpath>
+        </field>
+    </record>
+
+
+</odoo>

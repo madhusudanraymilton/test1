@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+portal_leave_access_strict,Portal: Read Own Leaves,hr_holidays.model_hr_leave,base.group_portal,1,1,1,0
+portal_leave_allocation_access_strict,Portal: Read Own Allocations,hr_holidays.model_hr_leave_allocation,base.group_portal,1,0,0,0
+portal_leave_type_access_strict,Portal: Read Active Leave Types,hr_holidays.model_hr_leave_type,base.group_portal,1,0,0,0
+portal_employee_access_strict,Portal: Read Own Employee Record,hr.model_hr_employee,base.group_portal,1,0,0,0

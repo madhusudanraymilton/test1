@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Wizard Form View -->
+    <record id="wizard_link_portal_employee_form" model="ir.ui.view">
+        <field name="name">wizard.link.portal.employee.form</field>
+        <field name="model">wizard.link.portal.employee</field>
+        <field name="arch" type="xml">
+            <form string="Link Portal Users to Employees">
+                <sheet>
+                    <div class="alert alert-info mb-3" role="alert">
+                        <p><strong>Create Employee Records for Portal Users</strong></p>
+                        <p>This wizard will automatically create employee records for selected portal users who don't have one yet.</p>
+                    </div>
+
+                    <group>
+                        <field name="count_selected" readonly="1"/>
+                    </group>
+
+                    <group string="Select Portal Users">
+                        <field name="user_ids" nolabel="1" widget="many2many_tags"/>
+                    </group>
+
+                    <div class="alert alert-warning mt-3" role="alert">
+                        <strong>Note:</strong> This will create employee records with basic information from the user profile.
+                        You can edit the employee records later to add more details.
+                    </div>
+                </sheet>
+                <footer>
+                    <button string="Create Employees"
+                            name="action_create_employees"
+                            type="object"
+                            class="btn-primary"
+                            data-hotkey="q"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Wizard Action -->
+    <record id="action_wizard_link_portal_employee" model="ir.actions.act_window">
+        <field name="name">Link Portal Users to Employees</field>
+        <field name="res_model">wizard.link.portal.employee</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Menu Item under Employees (not Configuration) -->
+    <menuitem id="menu_wizard_link_portal_employee"
+              name="Link Portal Users to Employees"
+              parent="hr.menu_hr_root"
+              action="action_wizard_link_portal_employee"
+              sequence="100"
+              groups="hr.group_hr_manager"/>
+</odoo>
