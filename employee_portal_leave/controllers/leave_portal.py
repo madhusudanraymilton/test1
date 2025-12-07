@@ -169,6 +169,10 @@ class PortalLeaveController(http.Controller):
                 'state': 'team_leader_approval' if employee.portal_team_leader_id else 'confirm',
                 #end new
             }
+            print("##################################################################################################")
+            _logger.info(f"Found {vals} ####################################")
+            print(vals)
+            print("##################################################################################################")
 
             # Add delegation if provided
             delegate_id = post.get('delegate_employee_id')
@@ -234,7 +238,7 @@ class PortalLeaveController(http.Controller):
                 '/my/leave/history?success=Leave request submitted successfully and pending approval')
 
         except ValueError as e:
-            _logger.error(f"ValueError in submit_leave: {str(e)}")
+            _logger.error(f"ValueError in submit_leave: {str(e)}") 
             return request.redirect(f'/my/leave/apply?error=Invalid input provided')
         except Exception as e:
             _logger.error(f"Error in submit_leave: {str(e)}", exc_info=True)
