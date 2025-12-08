@@ -32,14 +32,12 @@
             </form>
         </field>
     </record>
-
     <record id="action_books" model="ir.actions.act_window">
-        <field name="name">Book Action</field>
+        <field name="name">Books</field>
         <field name="res_model">book.books</field>
-        <field name="view_mode">list, form</field>
+        <field name="view_mode">list,form</field>
     </record>
-
-    <menutiem id="menu_books_root" name="Books" sequence="10"/>
-    <menutiem id="menu_books" name="Books" parent="menu_books_root" action="action_books" sequence="1"/>
+    <menuitem id="menu_books_root" name="Books" sequence="10"/>
+    <menuitem id="menu_books" name="Books" parent="menu_books_root" action="action_books" sequence="1"/>
 
 </odoo>
