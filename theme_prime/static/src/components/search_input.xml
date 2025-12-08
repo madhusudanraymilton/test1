@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="theme_prime.TpSearchInput">
+        <t t-set="_title" t-value="resModelInfo[this.model] ? resModelInfo[this.model].title : 'Records'"/>
+        <div t-ref="tp-search-component" class="dropdown tp-search-dropdown w-100" t-on-focusout="onFocusout" role="menu">
+            <div class="input-group">
+                <input t-ref="tp-search-input" class="form-control border tp-search-input shadow-sm tp-rounded-border-lg bg-white mb-0 h6" type="text" t-on-input="search" t-attf-placeholder="Search #{_title} by name"/>
+                <button t-on-focusout="onFocusout" t-if="hasSuggestion" t-on-click="() => this.showSuggestion()" class="input-group-text btn p-0 btn-soft-primary ms-2 d-flex align-items-center justify-content-center" style="height:45px;width:45px;">
+                    <t t-call="theme_prime.icon_magic">
+                        <t t-set="hw" t-value="20"/>
+                    </t>
+                </button>
+            </div>
+            <span class="input-group-text tp-search-icon p-2 border-0">
+                <i class="fa fa-search mb-0 fw-light" style="color: #dee2e6;"></i>
+            </span>
+            <div t-ref="tp-search-dropdown" style="max-height:500px;" t-attf-class="dropdown-menu overflow-auto border w-100 mt-2 p-0 bg-white tp-rounded-border tp-auto-complete-dropdown-menu tp-dropdown-menu px-2 shadow-sm mt-2 #{state.term or state.records.length ? 'show' : ' '}">
+                <t t-if="state.records.length">
+                    <small t-if="state.term" class="my-2 d-block fw-light"><i class="fa fa-circle text-primary"/> Matched <t t-esc="_title"/></small>
+                    <a t-foreach="state.records" href="#" t-as="record" t-att-data-id="record.id" t-on-click="() => this._onClickSelectRecord(record.id)" t-key="record.id" class="dropdown-item tp-rounded-border p-2 text-wrap my-2">
+                        <t t-if="resModelInfo[this.model] &amp;&amp; resModelInfo[this.model].template">
+                            <t t-call="#{resModelInfo[this.model].template}"/>
+                        </t>
+                        <t t-else="" t-esc="record.name"/>
+                    </a>
+                </t>
+                <t t-if="state.collections.length">
+                    <small class="my-2 d-block fw-light"><i class="fa fa-circle text-success"/> Matched Collection</small>
+                    <a t-foreach="state.collections" href="#" t-as="record" t-att-data-id="record.id" t-on-click="() => this._onClickSelectCollection(record.id)" t-key="record.id" class="position-relative dropdown-item tp-rounded-border my-2 p-2 text-wrap">
+                        <span t-on-click.prevent.stop="(ev) => this._onClickRemoveCollection(record.id)" class="badge d-flex align-items-center badge-soft-danger me-2 justify-content-center position-absolute top-50 end-0 translate-middle-y p-2">
+                            <t t-call="theme_prime.icon_trash">
+                                <t t-set="hw" t-value="16"/>
+                            </t>
+                        </span>
+                        <p class="fw-normal h6 mb-1 tp-text-body" t-esc="record.name"></p>
+                        <p t-att-title="record.recordsName" style="max-width:260px;" class="fw-light small mb-0 tp-text-body text-truncate"><t t-esc="record.count"/> Items</p>
+                    </a>
+                </t>
+                <a t-if="!state.collections.length and !state.records.length" href="#" class="dropdown-item p-2 text-wrap text-muted mt-2">No results found for <span class="text-primary">" <t t-esc="state.term"/> " </span>. Please try another search.</a>
+            </div>
+        </div>
+    </t>
+    <t t-name="theme_prime.tpProductPlaceHolder">
+        <div class="row g-0">
+            <div class="col-2">
+                <t t-if="this.model === 'product.attribute.value'">
+                    <img style="max-height:60px;" t-attf-src="/web/image?model=#{this.model}&amp;id=#{record.id}&amp;field=dr_image" class="img o_image_40_cover me-auto tp-rounded-border"/>
+                </t>
+                <t t-else="">
+                    <img t-if="record.img_small" t-att-src="record.img_small" class="img o_image_40_cover me-auto tp-rounded-border"/>
+                    <img t-else=" " t-attf-src="/web/image?model=#{this.model}&amp;id=#{record.id}&amp;field=image_128" class="img o_image_40_cover me-auto tp-rounded-border"/>
+                </t>
+            </div>
+            <div class="col-10 d-flex align-items-start justify-content-center flex-column">
+                <p class="fw-normal h6 mb-1 tp-text-body" t-esc="record.name"></p>
+                <div>
+                    <p t-if="this.model === 'product.public.category'" class="small mb-0 text-primary fw-light"><t t-out="record.count"/> Products</p>
+                    <p t-if="['product.template', 'product.product'].includes(this.model)" class="small mb-0 text-primary fw-light" t-out="record.price"/>
+                </div>
+            </div>
+        </div>
+    </t>
+    <t t-name="theme_prime.TpRangeInput">
+        <div class="row my-2 px-2 g-0">
+            <div class="col-7">
+                <h6 class="tp-text-body my-3 text-uppercase small"><t t-out="title"/></h6>
+            </div>
+            <div class="col-5 text-end align-items-center d-flex justify-content-end">
+                <span class="tp-current-count small text-primary fw-bold my-3 text-uppercase small"><t t-out="value"/></span>
+                <span class="small fw-normal text-muted my-3 text-uppercase small">/ <t t-out="maxValue"/></span>
+            </div>
+            <div class="col-12">
+                <input t-att-data-name="this.props.name" t-attf-style="background-image:#{style};" t-ref="tp-range-input" t-on-input="onInput" t-on-change="onChangeInput" class="tp-range-input w-100" type="range" t-attf-value="#{value}" t-att-min="minValue" t-att-max="maxValue"/>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="theme_prime.TpBoolean">
+        <div class="row g-0 px-2 my-3">
+            <div class="col-8 d-flex align-items-center">
+                <h6 class="tp-text-body mt-3 text-uppercase small" t-out="title"/>
+            </div>
+            <div class="col-4">
+                <label class="o_switch mt-3 justify-content-end mb-0 o_switch_danger_success">
+                    <input t-on-change="onChangeInput" type="checkbox" class="form-check-input" t-att-id="uid" t-att-checked="value || None"/>
+                    <span></span>
+                </label>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="theme_prime.TpDatePicker">
+        <div class="border mb-4 tp-rounded-border overflow-hidden">
+            <div class="d-flex position-relative p-2 align-items-center cursor-pointer bg-white" t-on-click="onClickTime" >
+                <div class="flex-shrink-0">
+                    <i style="font-size:16px;" t-attf-class="#{props.icon} bg-primary tp-rounded-circle rounded-circle"/>
+                </div>
+                <div class="flex-grow-1 ms-3">
+                    <h6 class="tp-text-body mb-0 fw-light small" t-out="title"/>
+                    <div class="position-relative">
+                        <input t-ref="tp-date-input" class="input w-100 h6 pt-1 fw-normal mb-0 tp-datepicker-input border-0 mt-1" value="" placeholder="set time" type="text"/>
+                        <h6 t-if="!state.value" class="text-primary mb-0 bg-white h-100 fw-normal position-absolute start-0 mt-1 w-100 d-inline-block top-0">Set time</h6>
+                    </div>
+                </div>
+                <i class="fa fa-chevron-down" style="font-size: 8px;color: #898b8d;"/>
+            </div>
+            <div t-if="state.value" class="p-2 border-top">
+                <small class="tp-text-body fw-light" t-esc="props.subtitle"/>
+                <div class="row g-0 mt-2 tp-rounded-border overflow-hidden">
+                    <t t-foreach="state.countdown" t-as="_val" t-key="_val_index+1">
+                        <div class="text-center col py-2 tp-bg-soft-primary">
+                            <div t-attf-class="flex-column h-100 d-flex align-items-center justify-content-center #{_val_index !== 0 ? 'border-start' : ''}">
+                                <h6 class="d-block mb-1 fw-normal text-capitalize text-primary" t-esc="state.countdown[_val]"></h6>
+                                <small class="fw-light" t-esc="_val"></small>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="theme_prime.TpDomainComponent">
+        <div class="row tp-domain-builder-container g-0">
+            <div class="col-12">
+                <div class="bg-white p-3 tp-rounded-border-lg border shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center pb-2">
+                        <h5 class="mb-0"> <i class="fa fa-th-list text-primary"></i> Selection Rules</h5>
+                        <div class="align-items-center d-flex">
+                            Match:
+                            <select style="width:100px;" class="form-select border shadow-sm px-3 py-2 ms-2 tp-text-body tp-rounded-border-lg" t-on-change="_onChangeCondition">
+                                <option value="or" t-att-selected="state.condition === 'or' ? 'selected' : undefined">
+                                    Any
+                                </option>
+                                <option value="and" t-att-selected="state.condition === 'and' ? 'selected' : undefined">
+                                    All
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mt-3">
+                        <t t-foreach="state.domainProps" t-as="dp" t-key="`${dp.domain[0]}_${dp_index}`">
+                            <t t-set="domain" t-value="dp.domain"/>
+                            <t t-set="fieldName" t-value="domain[0]"/>
+                            <t t-set="operator" t-value="domain[1]"/>
+                            <t t-set="operators" t-value="getRelatedOperator(fieldName)"/>
+                            <t t-set="fieldType" t-value="this.getRecord(fieldsList, fieldName, 'name').type"/>
+                            <div class="border bg-white p-1 tp-rounded-border-lg shadow-sm position-relative">
+                                <div class="col-12">
+                                    <a href="#" t-on-click="() => this.onDeleteRule(dp_index)" class="text-muted position-absolute top-0 start-100 translate-middle bg-white" style="color: #bebebe !important;line-height: 10px;" title="Remove" >
+                                        <t t-call="theme_prime.icon_cross_circle"> <t t-set="hw" t-value="14"/></t>
+                                    </a>
+                                    <div class="d-flex p-2 align-items-center">
+                                        <div class="flex-shrink-0">
+                                            <span class="bg-primary tp-rounded-circle d-inline-block rounded-circle" t-esc="dp_index+1"/>
+                                        </div>
+                                        <div class="flex-grow-1 position-relative ps-2 px-3 py-2 tp-rounded-border-lg">
+                                            <div class="small">
+                                                <span class="tp-text-body fw-lighter fst-italic">Product </span>
+                                                <span t-if="['name', 'list_price'].includes(fieldName)" t-esc="this.getRecord(fieldsList, fieldName, 'name').label"/>
+                                                <span class="fw-bold tp-text-body"> "<t t-esc="operators[operator]"/>" </span>
+                                                <span t-if="!['name', 'list_price'].includes(fieldName)"><t t-esc="this.getRecord(fieldsList, fieldName, 'name').label"/> <t t-if="operator === 'child_of'">of</t></span>
+                                            </div>
+                                            <div class="small text-primary w-75">
+                                                <t t-foreach="dp.records || []" t-as="record" t-key="record.id">
+                                                    <t t-esc="record.name"/><t t-if="record_index + 1 != dp.records.length">, </t>
+                                                </t>
+                                                <t t-if="['name', 'list_price'].includes(fieldName)" t-esc="domain[2]"/>
+                                            </div>
+                                            <div class="tp-domain-action-btn-block">
+                                                <button t-on-click="() => this.onEditRule(dp_index, true)" t-attf-class="btn btn-sm fw-light btn-soft-primary #{!dp.editMode ? '' : 'd-none'}"> <t t-call="theme_prime.icon_pencil"><t t-set="hw" t-value="12"/></t> Edit</button>
+                                                <button t-on-click="() => this.onEditRule(dp_index, false)" t-attf-class="btn btn-sm fw-light btn-primary #{dp.editMode ? '' : 'd-none'}"> <t t-call="theme_prime.icon_check_circle"><t t-set="hw" t-value="12"/></t> Set</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div t-attf-class="col-12 pt-2 #{dp.editMode ? '' : 'd-none'}">
+                                    <div class="tp-text-body mb-2 p-2">
+                                        <h6 class="tp-text-body small">Field :</h6>
+                                        <select t-on-change.stop="(ev) => this.onChangeField(ev, dp_index)" class="form-select border shadow-sm px-3 py-2 my-3 tp-text-body tp-rounded-border-lg">
+                                            <t t-foreach="fieldsList" t-as="field" t-key="field.name">
+                                                <option t-att-value="field.name" t-att-selected="fieldName === field.name ? 'selected' : undefined">
+                                                    <t t-esc="field.label"/>
+                                                </option>
+                                            </t>
+                                        </select>
+                                        <h6 class="tp-text-body small">Operators :</h6>
+                                        <t t-set="operators" t-value="getRelatedOperator(fieldName)"/>
+                                        <select t-on-change.stop="(ev) => this.onChangeOperator(ev, dp_index)" class="form-select tp-text-body my-3 border shadow-sm px-3 py-2 tp-rounded-border-lg">
+                                            <t t-foreach="operators" t-as="op" t-key="op">
+                                                <option t-att-value="op" t-att-selected="operator === op ? 'selected' : undefined">
+                                                    <t t-esc="operators[op]"/>
+                                                </option>
+                                            </t>
+                                        </select>
+                                        <h6 t-if="fieldName != 'dr_has_discount'" class="tp-text-body small">Value :</h6>
+                                        <t t-if="fieldType.startsWith('many')" t-component="getOWLComponent('TpRecordSelector')" t-props="{... this._prepareRecords(dp_index)}"/>
+                                        <t t-if="fieldType === 'text' || fieldType === 'integer'">
+                                            <input t-on-change.stop="(ev) => this.onChangeValue(ev, dp_index, fieldType)" t-attf-type="#{fieldType === 'integer' ? 'number' : 'text'}" class="form-control border px-3 py-2 tp-rounded-border-lg"/>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                            <div t-if="state.domainProps.length &gt; dp_index+1" class="col-6 border-end tp-domain-operator position-relative" style="height:60px;">
+                                <span class="tp-rounded-circle small d-flex align-items-center justify-content-center rounded-circle bg-primary text-uppercase"><t t-esc="state.condition"/></span>
+                            </div>
+                        </t>
+                        <div class="my-4 text-center p-3 tp-rounded-border-lg" t-if="!state.domainProps.length">
+                            <img class="img img-fluid mx-auto" style="max-height:200px;" src="/theme_prime/static/src/img/think_twice_before_copy.png"/>
+                            <h6 class="mt-3 fw-light tp-text-body">No rules are added.</h6>
+                            <h6 class="small fw-light tp-text-body-light">Please add some rules and make snippet more powerful.</h6>
+                        </div>
+                        <div t-attf-class="col-6 tp-domain-operator position-relative #{state.domainProps.length ? 'border-end mb-4' : 'mb-5'}" style="height:30px;">
+                            <button t-on-click="() => this.onAddNewRule()" class="btn btn-primary btn-sm  position-absolute  top-100 start-100 translate-middle w-75"> <i class="fa fa-plus"></i> Add New Rule</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="mt-4 bg-white p-3 tp-rounded-border-lg border shadow-sm">
+                    <h5 class="py-2"><i class="fa fa-cog text-primary"/> Options</h5>
+                    <div class="row g-1">
+                        <t t-foreach="currentSubCoreComponents" t-as="component" t-key="component.name">
+                            <div class="col-6">
+                                <t t-component="this.getOWLComponent(component.component)" t-props="component"/>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="py-3 tp-rounded-border-lg">
+                    <div class="row g-0">
+                        <div class="col-12">
+                            <t t-component="this.getOWLComponent('TpDropDown')" t-props="{title: 'Readymade Rules Templates',name: 'domainTemplate', records: domainTemplates, buttonClasses: 'btn d-flex btn-sm justify-content-between align-items-center btn-light bg-white border shadow-sm fw-light w-100', value: 0}"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="theme_prime.TpActions">
+        <h5 class="fw-light text-primary ps-2 mt-3">Quick Actions</h5>
+        <div class="row g-0 tp-actions-container">
+            <t t-foreach="supportedActions" t-as="action" t-key="action">
+                <t t-set="action_info" t-value="this._getAction(action)"/>
+                <t t-set="is_action_active" t-value="this.activeActions.includes(action)"/>
+                <div t-if="action_info &amp;&amp; !action_info.disabled" class="col-6 mt-3">
+                    <button t-on-click="() => this.onActionClick(action)" t-attf-class="mx-2 btn text-start #{is_action_active ? 'btn-soft-primary' : 'btn-light'}" style="width:95%;">
+                        <t t-call="#{action_info.icon}">
+                            <t t-set="hw" t-value="18"/>
+                        </t>
+                        <span class="ps-3 fw-light" t-esc="action_info.label"></span>
+                    </button>
+                </div>
+            </t>
+        </div>
+    </t>
+
+    <t t-name="theme_prime.TpImageUpload">
+        <div class="row g-0 px-2 my-3">
+            <div class="col-7">
+                <h6 class="tp-text-body my-3 text-uppercase small" t-out="title"/>
+            </div>
+            <div class="col-5 text-center mt-3">
+                <i t-on-click="() => this.onClick()" t-attf-class="fa fa-upload #{value ? 'text-primary' : 'tp-text-body-light'}"/>
+                <i t-on-click="() => this.onClickRemove()" title="Remove Background" t-attf-class="fa fa-times text-danger ps-3 #{value ? ' ' : 'd-none'}"/>
+            </div>
+        </div>
+    </t>
+
+</templates>

@@ -1,0 +1,560 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="template_header_mobile" name="Template Header Mobile">
+        <t t-call="website.navbar">
+            <t t-set="_navbar_classes" t-valuef="o_header_mobile d-block d-lg-none shadow-sm"/>
+            <t t-set="_navbar_expand_class" t-valuef="None"/>
+            <t t-set="_navbar_name" t-valuef="Mobile"/>
+            <div id="o_main_nav" class="container flex-wrap">
+                <!-- Toggler -->
+                <ul class="o_header_mobile_buttons_wrap navbar-nav flex-row align-items-center gap-2 mb-0">
+                    <li>
+                        <button
+                            class="tp-menu-sidebar-action btn btn-link p-0 o_not_editable shadow-none"
+                            type="button"
+                            data-bs-toggle="offcanvas"
+                            data-bs-target="#top_menu_collapse_mobile"
+                            aria-controls="top_menu_collapse_mobile"
+                            aria-expanded="false"
+                            aria-label="Toggle navigation"
+                            >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+                            </svg>
+                        </button>
+                    </li>
+                </ul>
+                <!-- Brand -->
+                <t t-call="website.placeholder_header_brand">
+                    <t t-set="_link_class" t-valuef="me-0"/>
+                </t>
+                <!-- Cart -->
+                <t t-call="theme_prime.component_account_info">
+                    <t t-set="_hide_search" t-value="True"/>
+                    <t t-set="_hide_wishlist" t-value="True"/>
+                    <t t-set="_hide_login_info" t-value="True"/>
+                </t>
+                <div t-attf-class="offcanvas offcanvas-start tp-menu-sidebar tp-offcanvas-sidebar o_navbar_mobile" id="top_menu_collapse_mobile">
+                    <div class="offcanvas-body p-0">
+                        <div class="p-3 d-flex align-items-center justify-content-between border-bottom">
+                            <img t-att-alt="website.name" class="logo" t-attf-src="/web/image/website/#{website.id}/logo/60x60"/>
+                            <div class="d-flex align-items-center gap-3">
+                                <t t-call="theme_prime.component_language_pricelist_selector">
+                                    <t t-set="_dropdown_classes" t-valuef="px-3 py-2 rounded-pill border"/>
+                                </t>
+                                <button type="button" class="btn-close rounded-circle border px-2 py-1" data-bs-dismiss="offcanvas" title="Close" aria-label="Close"></button>
+                            </div>
+                        </div>
+                        <div class="p-3 border-bottom tp-hook-category" t-if="website._get_dr_theme_config('json_sidebar_config').get('menu_sidebar_show_category') and website.has_ecommerce_access()">
+                            <div class="row g-0">
+                                <div class="col-4 text-center p-1 mb-3" t-foreach="request.env['product.public.category'].search([('parent_id', '=', False), ('website_id', 'in', [False, website.id])], limit=6)" t-as="_category_id">
+                                    <a class="d-block" t-attf-href="/shop/category/#{_category_id.id}" t-att-title="_category_id.name">
+                                        <img loading="lazy" t-att-alt="_category_id.name" class="img category-img img-fluid" t-attf-src="/web/image/product.public.category/#{_category_id.id}/image_128" />
+                                        <p class="h6 mt-2 mb-0 text-truncate category-name" t-out="_category_id.name" />
+                                    </a>
+                                </div>
+                            </div>
+                            <a href="#" class="btn w-100 fw-bold border tp-category-action" data-position="start">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" class="bi bi-grid-fill text-primary me-2" viewBox="0 0 16 16">
+                                    <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5zm8 0A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5zm-8 8A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5zm8 0A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5z"/>
+                                </svg>
+                                Explore All Categories
+                            </a>
+                        </div>
+                        <!-- Menu -->
+                        <t t-call="website.navbar_nav">
+                            <t t-set="_nav_class" t-valuef="border-bottom"/>
+                            <t t-set="_no_autohide_menu_mobile" t-valuef="True"/>
+                            <t t-set="is_mobile" t-value="True"/>
+                            <t t-foreach="website.menu_id.child_id" t-as="submenu">
+                                <t t-call="website.submenu">
+                                    <t t-set="item_class" t-valuef="nav-item"/>
+                                    <t t-set="link_class" t-valuef="nav-link"/>
+                                    <t t-set="dropdown_toggler_classes" t-valuef="d-flex justify-content-between align-items-center"/>
+                                    <t t-set="dropdown_menu_classes" t-valuef="position-relative rounded-0 o_dropdown_without_offset"/>
+                                </t>
+                            </t>
+                        </t>
+                        <ul t-if="website.has_ecommerce_access()" class="nav navbar-nav py-2 tp-hook-account-info">
+                            <li class="nav-item" t-nocache="The number of products is dynamic, this rendering cannot be cached.">
+                                <a href="/shop/cart" class="nav-link">
+                                    <div class="d-flex align-items-center">
+                                        <i class="dri dri-cart"/>
+                                        <div class="d-flex align-items-center">
+                                            <t t-set="website_sale_cart_quantity" t-value="request.session['website_sale_cart_quantity'] if 'website_sale_cart_quantity' in request.session else website.sale_get_order().cart_quantity or 0"/>
+                                            <p class="h6 mb-0 ms-2">My Cart</p> <span class="ms-2">(<span class="my_cart_quantity" t-att-data-order-id="request.session.get('sale_order_id', '')"><t t-out="website_sale_cart_quantity"/></span>)</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li class="nav-item" t-nocache="The wishlist may vary and depends on the user.">
+                                <a href="/shop/wishlist" class="nav-link">
+                                    <div class="d-flex align-items-center">
+                                        <i class="dri dri-wishlist"/>
+                                        <div class="d-flex align-items-center">
+                                            <t t-set="wishlist_quantity" t-value="len(request.env['product.wishlist'].current())"/>
+                                            <p class="h6 mb-0 ms-2">My Wishlist</p> <span class="ms-2">(<span class="tp-wishlist-counter"><t t-out="wishlist_quantity"/></span>)</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <t t-if="user_id._is_public()">
+                        <div t-if="is_view_active('portal.user_sign_in')" class="d-flex align-items-center p-3 gap-2">
+                            <a href="/web/login" class="btn btn-primary w-100 fw-bold">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" class="bi bi-box-arrow-in-right me-1" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M6 3.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 0-1 0v2A1.5 1.5 0 0 0 6.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-8A1.5 1.5 0 0 0 5 3.5v2a.5.5 0 0 0 1 0z"/>
+                                    <path fill-rule="evenodd" d="M11.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H1.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z"/>
+                                </svg>
+                                Login <t t-if="request.env['res.users']._get_signup_invitation_scope() == 'b2c'"><span class="mx-1">/</span> Signup</t>
+                            </a>
+                        </div>
+                    </t>
+                    <div t-else="" class="d-flex align-items-center p-3 gap-3">
+                        <a href="#" class="btn btn-primary tp-account-info-sidebar-action flex-grow-1 fw-bold" data-position="start">
+                            <i class="dri dri-user me-1"/> My Account
+                        </a>
+                        <a href="/web/session/logout?redirect=/" class="btn border fw-bold">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" class="bi bi-box-arrow-right text-danger me-1" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z"/>
+                                <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
+                            </svg>
+                            Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="template_header_style_1" inherit_id="website.layout" name="Header Style - 1" active="False">
+        <xpath expr="//header" position="attributes">
+            <attribute name="t-attf-class" add="tp-custom-header" separator=" "/>
+        </xpath>
+        <xpath expr="//header/*" position="before">
+            <div class="tp-preheader o_colored_level o_cc" data-name="Preheader">
+                <div class="container">
+                    <div class="row align-items-center justify-content-lg-between justify-content-center">
+                        <div class="col-auto py-3">
+                            <div class="s_social_media o_not_editable no_icon_color" data-snippet="s_social_media" data-name="Social Media">
+                                <a href="/website/social/facebook" class="s_social_media_facebook" target="_blank" aria-label="Facebook">
+                                    <i class="fa fa-facebook p-1 o_editable_media"/>
+                                </a>
+                                <a href="/website/social/twitter" class="s_social_media_twitter" target="_blank" aria-label="X">
+                                    <i class="fa fa-twitter p-1 o_editable_media"/>
+                                </a>
+                                <a href="/website/social/linkedin" class="s_social_media_linkedin" target="_blank" aria-label="LinkedIn">
+                                    <i class="fa fa-linkedin p-1 o_editable_media"/>
+                                </a>
+                                <a href="/website/social/github" class="s_social_media_github" target="_blank" aria-label="GitHub">
+                                    <i class="fa fa-github p-1 o_editable_media"/>
+                                </a>
+                                <a href="/website/social/youtube" class="s_social_media_youtube" target="_blank" aria-label="YouTube">
+                                    <i class="fa fa-youtube p-1 o_editable_media"/>
+                                </a>
+                                <a href="/website/social/instagram" class="s_social_media_instagram" target="_blank" aria-label="Instagram">
+                                    <i class="fa fa-instagram p-1 o_editable_media"/>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-auto py-3 d-none d-lg-block">
+                            <ul class="list-inline mb-0">
+                                <li class="list-inline-item"><a href="tel:+1 555-555-5556"><i class="fa fa-1x fa-fw fa-phone"/> +1 555-555-5556</a></li>
+                                <li class="list-inline-item"><a href="mailto:info@yourcompany.example.com"><i class="fa fa-1x fa-fw fa-envelope"/> info@yourcompany.example.com</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-auto py-3 d-none d-lg-block">
+                            <t t-call="theme_prime.component_language_pricelist_selector"/>
+                        </div>
+                        <div class="col-auto py-3 d-none d-lg-block">
+                            <t t-call="theme_prime.component_account_info">
+                                <t t-set="_ul_classes" t-valuef="gap-3"/>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+        <xpath expr="//header//nav" position="replace">
+            <t t-call="website.navbar">
+                <t t-set="_navbar_classes" t-valuef="d-none d-lg-block shadow-sm"/>
+                <div id="o_main_nav" class="container">
+                    <!-- Brand -->
+                    <t t-call="website.placeholder_header_brand"/>
+                    <!-- Menu -->
+                    <t t-call="website.navbar_nav">
+                        <t t-set="_nav_class" t-valuef="flex-grow-1 justify-content-end"/>
+                        <t t-foreach="website.menu_id.child_id" t-as="submenu">
+                            <t t-call="website.submenu">
+                                <t t-set="item_class" t-value="'nav-item'"/>
+                                <t t-set="link_class" t-value="'nav-link'"/>
+                            </t>
+                        </t>
+                    </t>
+                </div>
+            </t>
+            <t t-call="theme_prime.template_header_mobile"/>
+        </xpath>
+    </template>
+
+    <template id="template_header_style_2" inherit_id="website.layout" name="Header Style - 2" active="False">
+        <xpath expr="//header" position="attributes">
+            <attribute name="t-attf-class" add="tp-custom-header" separator=" "/>
+        </xpath>
+        <xpath expr="//header//nav" position="replace">
+            <div class="tp-header-box o_header_hide_on_scroll d-none d-lg-block o_colored_level o_cc">
+                <div class="container">
+                    <div class="row justify-content-center justify-content-lg-between align-items-center">
+                        <div class="col-4 py-3">
+                            <t t-call="website.website_search_box_input">
+                                <t t-set="_form_classes" t-valuef="o_wsale_products_searchbar_form o_not_editable"/>
+                                <t t-set="_classes" t-valuef="border tp-input-border-radius"/>
+                                <t t-set="search_type" t-valuef="products"/>
+                                <t t-set="action" t-value="'/shop'"/>
+                            </t>
+                        </div>
+                        <div class="col-4 text-center py-3">
+                            <!-- Brand -->
+                            <t t-call="website.placeholder_header_brand">
+                                <t t-set="_link_class" t-valuef="d-inline-block mx-auto"/>
+                            </t>
+                        </div>
+                        <div class="col-4 py-3">
+                            <t t-call="theme_prime.component_account_info">
+                                <t t-set="_ul_classes" t-valuef="gap-4 justify-content-end"/>
+                                <t t-set="_hide_search" t-value="True"/>
+                                <t t-set="_show_total" t-value="True"/>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <t t-call="website.navbar">
+                <t t-set="_navbar_classes" t-valuef="d-none d-lg-block shadow-sm"/>
+                <div id="o_main_nav" class="container">
+                    <!-- Menu -->
+                    <t t-call="website.navbar_nav">
+                        <t t-set="_nav_class" t-valuef="flex-grow-1"/>
+                        <t t-foreach="website.menu_id.child_id" t-as="submenu">
+                            <t t-call="website.submenu">
+                                <t t-set="item_class" t-value="'nav-item'"/>
+                                <t t-set="link_class" t-value="'nav-link'"/>
+                            </t>
+                        </t>
+                    </t>
+                </div>
+            </t>
+            <t t-call="theme_prime.template_header_mobile"/>
+        </xpath>
+    </template>
+
+    <template id="template_header_style_3" inherit_id="website.layout" name="Header Style - 3" active="False">
+        <xpath expr="//header" position="attributes">
+            <attribute name="t-attf-class" add="tp-custom-header" separator=" "/>
+        </xpath>
+        <xpath expr="//header//nav" position="replace">
+            <div class="tp-header-box o_header_hide_on_scroll d-none d-lg-block o_colored_level o_cc">
+                <div class="container">
+                    <div class="row justify-content-center justify-content-lg-between align-items-center">
+                        <div class="col-4 py-3">
+                            <section class="s_text_block" data-snippet="s_text_block" data-name="Text">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="flex-shrink-0">
+                                        <span class="fa fa-phone text-primary fa-2x"/>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <p class="h6 mb-1">Call Us</p>
+                                        <p class="h5 mb-0"><a href="tel:+123 4567 780">+123 4567 780</a></p>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                        <div class="col-4 text-center py-3">
+                            <!-- Brand -->
+                            <t t-call="website.placeholder_header_brand">
+                                <t t-set="_link_class" t-valuef="d-inline-block mx-auto"/>
+                            </t>
+                        </div>
+                        <div class="col-4 py-3">
+                            <t t-call="theme_prime.component_account_info">
+                                <t t-set="_ul_classes" t-valuef="gap-4 justify-content-end"/>
+                                <t t-set="_show_total" t-value="True"/>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <t t-call="website.navbar">
+                <t t-set="_navbar_classes" t-valuef="d-none d-lg-block shadow-sm"/>
+                <div id="top_menu_container" class="container justify-content-between">
+                    <div id="o_main_nav" class="container d-flex align-items-center">
+                        <!-- Menu -->
+                        <t t-call="website.navbar_nav">
+                            <t t-set="_nav_class" t-valuef="flex-grow-1 "/>
+                            <t t-foreach="website.menu_id.child_id" t-as="submenu">
+                                <t t-call="website.submenu">
+                                    <t t-set="item_class" t-value="'nav-item'"/>
+                                    <t t-set="link_class" t-value="'nav-link'"/>
+                                </t>
+                            </t>
+                        </t>
+                        <div class="oe_structure oe_structure_solo flex-shrink-0">
+                            <section class="s_text_block" data-snippet="s_text_block" data-name="Text">
+                                <div class="container">
+                                    <a href="/contactus" class="btn btn-link btn_cta"><strong>SPECIAL OFFER</strong></a>
+                                    <a href="/contactus" class="btn btn-link btn_cta"><strong>CONTACT US</strong></a>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </t>
+            <t t-call="theme_prime.template_header_mobile"/>
+        </xpath>
+    </template>
+
+    <template id="template_header_style_4" inherit_id="website.layout" name="Header Style - 4" active="False">
+        <xpath expr="//header" position="attributes">
+            <attribute name="t-attf-class" add="tp-custom-header" separator=" "/>
+        </xpath>
+        <xpath expr="//header//nav" position="replace">
+            <div class="tp-header-box o_header_hide_on_scroll d-none d-lg-block o_colored_level o_cc">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-auto py-3">
+                            <!-- Brand -->
+                            <t t-call="website.placeholder_header_brand">
+                                <t t-set="_link_class" t-valuef="d-inline-block"/>
+                            </t>
+                        </div>
+                        <div class="col-auto py-3 flex-grow-1">
+                            <t t-call="website.website_search_box_input">
+                                <t t-set="_form_classes" t-valuef="mx-auto o_wsale_products_searchbar_form o_not_editable"/>
+                                <t t-set="_classes" t-valuef="border tp-input-border-radius"/>
+                                <t t-set="search_type" t-valuef="products"/>
+                                <t t-set="action" t-value="'/shop'"/>
+                            </t>
+                        </div>
+                        <div class="col-auto py-3 o_not_editable">
+                            <div class="row align-items-center justify-content-end tp-account-info">
+                                <div class="col-auto my-1">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-shrink-0">
+                                            <t t-nocache="The number of products is dynamic, this rendering cannot be cached.">
+                                                <t t-set="website_sale_cart_quantity" t-value="request.session['website_sale_cart_quantity'] if 'website_sale_cart_quantity' in request.session else website.sale_get_order().cart_quantity or 0"/>
+                                                <t t-set="show_cart" t-value="website.has_ecommerce_access()"/>
+                                                <div t-attf-class="o_not_editable position-relative o_wsale_my_cart tp-cart-sidebar-action #{not show_cart and 'd-none'}">
+                                                    <a href="/shop/cart">
+                                                        <i class="dri dri-cart tp-light-bg rounded-circle"/>
+                                                        <sup class="my_cart_quantity badge bg-primary" t-out="website_sale_cart_quantity" t-att-data-order-id="request.session.get('sale_order_id', '')"/>
+                                                    </a>
+                                                </div>
+                                            </t>
+                                        </div>
+                                        <div class="flex-grow-1 ms-3 d-none d-xl-block">
+                                            <div class="mb-1">My Cart</div>
+                                            <a class="tp-cart-sidebar-action" href="#"><p class="dr-update-cart-total h6 mb-0"><t t-out="website.sale_get_order().amount_total" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/></p></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-auto my-1">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-shrink-0">
+                                            <t t-nocache="The wishlist may vary and depends on the user.">
+                                                <t t-set="wishcount" t-value="len(request.env['product.wishlist'].current())"/>
+                                                <t t-set="show_wishes" t-value="website.has_ecommerce_access()"/>
+                                                <div t-attf-class="o_not_editable position-relative o_wsale_my_wish #{not show_wishes and 'd-none'}">
+                                                    <a href="/shop/wishlist">
+                                                        <i class="dri dri-wishlist tp-light-bg rounded-circle"/>
+                                                        <sup t-out="wishcount" t-attf-class="my_wish_quantity o_animate_blink badge bg-primary"/>
+                                                    </a>
+                                                </div>
+                                            </t>
+                                        </div>
+                                        <div class="flex-grow-1 ms-3 d-none d-xl-block">
+                                            <div class="mb-1">My Wishlist</div>
+                                            <a href="/shop/wishlist"><p class="h6 mb-0">View Wishlist</p></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-auto my-1" t-if="not user_id._is_public() or request.website.viewref('portal.user_sign_in').active">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-shrink-0">
+                                            <a href="#" class="tp-account-info-sidebar-action">
+                                                <i class="dri dri-user tp-light-bg rounded-circle"/>
+                                            </a>
+                                        </div>
+                                        <div class="flex-grow-1 ms-3 d-none d-xl-block">
+                                            <div t-nocache="User may vary." style="max-width: 150px;" class="text-truncate mb-1"><t t-out="not user_id._is_public() and user_id.name or 'Guest'"/></div>
+                                            <a class="tp-account-info-sidebar-action" href="#"><p class="h6 mb-0">My Account</p></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <t t-call="website.navbar">
+                <t t-set="_navbar_classes" t-valuef="d-none d-lg-block shadow-sm"/>
+                <!-- Navbar -->
+                <div id="o_main_nav" class="container">
+                    <t t-call="website.navbar_nav">
+                        <t t-set="_nav_class" t-value="'flex-grow-1'"/>
+                        <!-- Menu -->
+                        <t t-foreach="website.menu_id.child_id" t-as="submenu">
+                            <t t-call="website.submenu">
+                                <t t-set="item_class" t-value="'nav-item'"/>
+                                <t t-set="link_class" t-value="'nav-link'"/>
+                            </t>
+                        </t>
+                    </t>
+                </div>
+            </t>
+            <t t-call="theme_prime.template_header_mobile"/>
+        </xpath>
+    </template>
+
+    <template id="template_header_style_5" inherit_id="website.layout" name="Header Style - 5" active="False">
+        <xpath expr="//header" position="attributes">
+            <attribute name="t-attf-class" add="tp-custom-header" separator=" "/>
+        </xpath>
+        <xpath expr="//header//nav" position="replace">
+            <t t-call="website.navbar">
+                <t t-set="_navbar_classes" t-valuef="d-none d-lg-block shadow-sm py-3"/>
+                <div id="o_main_nav" class="container">
+                    <!-- Brand -->
+                    <t t-call="website.placeholder_header_brand"/>
+                    <!-- Navbar -->
+                    <t t-call="website.navbar_nav">
+                        <t t-set="_nav_class" t-valuef="flex-grow-1 justify-content-center"/>
+                        <!-- Menu -->
+                        <t t-foreach="website.menu_id.child_id" t-as="submenu">
+                            <t t-call="website.submenu">
+                                <t t-set="item_class" t-value="'nav-item'"/>
+                                <t t-set="link_class" t-value="'nav-link'"/>
+                            </t>
+                        </t>
+                    </t>
+                    <!-- Account Info -->
+                    <t t-call="theme_prime.component_account_info">
+                        <t t-set="_ul_classes" t-valuef="gap-3"/>
+                    </t>
+                </div>
+            </t>
+            <t t-call="theme_prime.template_header_mobile"/>
+        </xpath>
+    </template>
+
+    <template id="template_header_style_6" inherit_id="website.layout" name="Header Style - 6" active="False">
+        <xpath expr="//header" position="attributes">
+            <attribute name="t-attf-class" add="tp-custom-header" separator=" "/>
+        </xpath>
+        <xpath expr="//header//nav" position="replace">
+            <div class="container py-3 px-0">
+                <t t-call="website.navbar">
+                    <t t-set="_navbar_classes" t-valuef="o_full_border d-none d-lg-block py-3 px-4 shadow-sm"/>
+                    <div id="o_main_nav" class="container">
+                        <!-- Brand -->
+                        <t t-call="website.placeholder_header_brand">
+                            <t t-set="_link_class" t-valuef="me-4"/>
+                        </t>
+                        <!-- Navbar -->
+                        <t t-call="website.navbar_nav">
+                            <t t-set="_nav_class" t-valuef="me-auto"/>
+                            <!-- Menu -->
+                            <t t-foreach="website.menu_id.child_id" t-as="submenu">
+                                <t t-call="website.submenu">
+                                    <t t-set="item_class" t-valuef="nav-item"/>
+                                    <t t-set="link_class" t-valuef="nav-link"/>
+                                </t>
+                            </t>
+                        </t>
+                        <!-- Account Info -->
+                        <t t-call="theme_prime.component_account_info">
+                            <t t-set="_ul_classes" t-valuef="gap-3"/>
+                            <t t-set="_show_total" t-value="True"/>
+                        </t>
+                    </div>
+                </t>
+                <t t-call="theme_prime.template_header_mobile">
+                    <t t-set="_extra_navbar_classes" t-valuef="o_full_border mx-1"/>
+                </t>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="template_header_style_7" inherit_id="website.layout" name="Header Style - 7" active="False">
+        <xpath expr="//header" position="attributes">
+            <attribute name="t-attf-class" add="tp-custom-header" separator=" "/>
+        </xpath>
+        <xpath expr="//header//nav" position="replace">
+            <t t-call="website.navbar">
+                <t t-set="_navbar_classes" t-valuef="d-none d-lg-block shadow-sm py-3"/>
+                <div id="o_main_nav" class="container-fluid d-grid gap-4">
+                    <!-- Brand -->
+                    <t t-call="website.placeholder_header_brand"/>
+                    <!-- Menu -->
+                    <t t-call="website.navbar_nav">
+                        <t t-foreach="website.menu_id.child_id" t-as="submenu">
+                            <t t-call="website.submenu">
+                                <t t-set="item_class" t-valuef="nav-item"/>
+                                <t t-set="link_class" t-valuef="nav-link"/>
+                            </t>
+                        </t>
+                    </t>
+                    <!-- Search -->
+                    <t t-call="website.website_search_box_input">
+                        <t t-set="_form_classes" t-valuef="o_wsale_products_searchbar_form o_not_editable"/>
+                        <t t-set="_classes" t-valuef="border tp-input-border-radius"/>
+                        <t t-set="search_type" t-valuef="products"/>
+                        <t t-set="action" t-value="'/shop'"/>
+                    </t>
+                    <!-- Account Info -->
+                    <t t-call="theme_prime.component_account_info">
+                        <t t-set="_ul_classes" t-valuef="gap-2"/>
+                        <t t-set="_show_title" t-value="True"/>
+                        <t t-set="_hide_search" t-value="True"/>
+                    </t>
+                </div>
+            </t>
+            <t t-call="theme_prime.template_header_mobile"/>
+        </xpath>
+    </template>
+
+    <template id="template_header_style_8" inherit_id="website.layout" name="Header Style - 8" active="False">
+        <xpath expr="//header" position="attributes">
+            <attribute name="t-attf-class" add="tp-custom-header" separator=" "/>
+        </xpath>
+        <xpath expr="//header//nav" position="replace">
+            <t t-call="website.navbar">
+                <t t-set="_navbar_classes" t-valuef="d-none d-lg-block shadow-sm py-3"/>
+                <div id="o_main_nav" class="container-fluid">
+                    <!-- Navbar -->
+                    <t t-call="website.navbar_nav">
+                        <t t-set="_nav_class" t-valuef="flex-grow-1 flex-shrink-1 flex-basis-0"/>
+                        <!-- Menu -->
+                        <t t-foreach="website.menu_id.child_id" t-as="submenu">
+                            <t t-call="website.submenu">
+                                <t t-set="item_class" t-value="'nav-item'"/>
+                                <t t-set="link_class" t-value="'nav-link'"/>
+                            </t>
+                        </t>
+                    </t>
+                    <!-- Brand -->
+                    <t t-call="website.placeholder_header_brand">
+                        <t t-set="_link_class" t-valuef="me-0"/>
+                    </t>
+                    <!-- Account Info -->
+                    <t t-call="theme_prime.component_account_info">
+                        <t t-set="_ul_classes" t-valuef="gap-4 flex-grow-1 flex-shrink-1 flex-basis-0 justify-content-end"/>
+                    </t>
+                </div>
+            </t>
+            <t t-call="theme_prime.template_header_mobile"/>
+        </xpath>
+    </template>
+
+</odoo>

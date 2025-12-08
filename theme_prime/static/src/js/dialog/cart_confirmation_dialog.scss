@@ -1,0 +1,39 @@
+.tp-cart-confirmation-dialog {
+    .dr-confim-col {
+        background-color: rgba(o-color('primary'), 0.17);
+    }
+    .dr-confirm-product-image {
+        position: relative;
+        margin-top: 14px;
+        img {
+            border: 2px solid rgba(2, 2, 2, 0.12);
+            object-fit: cover;
+            height: 140px;
+            width: 140px !important;
+        }
+        .fa {
+            color: #ffffff !important;
+            @include o-position-absolute($right: 12px, $bottom: -2px);
+            position: absolute;
+            background: #22c187;
+            padding: 7px 6px 6px 6px;
+            line-height: 1;
+            border-radius: 20px;
+            font-size: 18px;
+            border: 4px solid #fff;
+        }
+    }
+    .s_d_title_text p {
+        font-size: 1.3rem;
+    }
+    .s_d_product_small_block {
+        .card {
+            cursor: pointer;
+        }
+        .d_product_info {
+            button {
+                display: none;
+            }
+        }
+    }
+}

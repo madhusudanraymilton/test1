@@ -1,0 +1,199 @@
+.tp-offcanvas-sidebar {
+    @include media-breakpoint-only(xs) {
+        width: 100%;
+        border-left-width: 0px;
+        border-right-width: 0px;
+    }
+    .tp-header-icon {
+        font-size: 20px;
+    }
+    .btn-close {
+        font-family: 'Droggol-Pack';
+        color: o-color('dark');
+        opacity: 1;
+        transition: 0.2s;
+        font-size: 18px;
+        background-image: none;
+        padding: 0;
+        height: auto;
+        width: auto;
+        &:before {
+            content: '\e870';
+        }
+        &:hover {
+            color: o-color('danger');
+        }
+        &:focus {
+            box-shadow: none;
+        }
+    }
+    .tp-scrollable-y {
+        @include tp-scroll();
+        overflow-y: auto;
+    }
+}
+
+.tp-cart-sidebar {
+    .tp-product-card, .tp-proceed-btn {
+        border-radius: 5px;
+    }
+    .tp-total-cart-items {
+        font-size: 0.675rem;
+    }
+    .tp-total-amount {
+        font-size: 0.975rem;
+    }
+    .coupon_form {
+        input[name=promo], .a-submit {
+            border-radius: 5px !important;
+        }
+        input[name=promo] {
+            margin-right: 6px;
+        }
+    }
+    .progress {
+        height: 0.5rem;
+        border-radius: 100rem;
+    }
+}
+
+.tp-search-sidebar .dr_search_autocomplete {
+    position: unset !important;
+    transform: none !important;
+    box-shadow: none;
+}
+
+.tp-similar-products-sidebar {
+    .tp-product-card {
+        border-radius: 5px;
+        img {
+            max-width: 78px;
+            max-height: 78px;
+        }
+    }
+}
+
+.tp-menu-sidebar {
+    height: 100dvh;
+    .logo {
+        max-height: 50px;
+        max-width: 110px;
+        object-fit: contain;
+        display: none;
+    }
+    .category-img {
+        width: 52px;
+        height: 52px;
+        object-fit: cover;
+        display: none;
+    }
+    // Lazy load images
+    &.show {
+        .logo {
+            display: inline-block;
+        }
+        .category-img {
+            display: inline-block;
+        }
+    }
+    .category-name {
+        font-size: 0.8rem;
+    }
+    ul > .nav-item {
+        > .nav-link, > .dropdown-menu li .dropdown-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 500;
+            font-size: 13px;
+            padding: 5px 20px;
+            min-height: 44px;
+            @if (index(('default', 'outline', 'border-bottom'), o-website-value('header-links-style'))) {
+                &.active {
+                    color: o-color('primary');
+                }
+                &:active {
+                    opacity: 0.7;
+                }
+            }
+        }
+        > .nav-link {
+            text-transform: uppercase;
+            @if (index(('default', 'outline', 'border-bottom'), o-website-value('header-links-style'))) {
+                color: map-get($grays, '900');
+            }
+        }
+        > .dropdown-menu {
+            position: unset !important;
+            transform: none !important;
+            box-shadow: none;
+            padding: 0px;
+            @include media-breakpoint-only(xs) {
+                max-width: 100vw;
+            }
+            li .dropdown-item {
+                color: map-get($grays, '600');
+                background-color: white;
+            }
+        }
+        > .dropdown-toggle {
+            &:after {
+                content: "\f105";
+                transition: 0.2s;
+                font-size: 18px;
+            }
+            &.show {
+                background-color: map-get($grays, '100');
+                &:after {
+                    transform: rotate(90deg);
+                }
+            }
+        }
+    }
+}
+
+.tp-category-sidebar {
+    .tp-category-header {
+        z-index: 2;
+        height: 55px;
+        .fa {
+            font-size: 24px;
+        }
+    }
+    .tp-category-link {
+        height: 55px;
+        .fa-angle-right {
+            font-size: 18px;
+        }
+        &.back {
+            z-index: 2;
+        }
+    }
+    .style-cover {
+        .tp-root-category {
+            height: 90px;
+            background-size: cover;
+            background-position-x: right;
+            .tp-category-name {
+                font-weight: 500;
+                font-size: 15px;
+                .fa-angle-right {
+                    font-size: 15px;
+                }
+            }
+        }
+    }
+}
+
+.tp-account-info-sidebar {
+    .list-group {
+        border-radius: 5px;
+        .list-group-item {
+            height: 55px;
+        }
+    }
+}
+
+.tp-lazy-content-sidebar {
+    --offcanvas-width: 500px;
+}

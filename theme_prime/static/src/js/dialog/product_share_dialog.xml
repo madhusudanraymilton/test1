@@ -1,0 +1,98 @@
+<?xml version="1.0" ?>
+<templates>
+    <div t-name="theme_prime.product_share_dialog">
+        <div class="o_dialog tp-product-share-dialog" t-att-id="id" t-att-class="{ o_inactive_modal: !data.isActive }">
+            <div role="dialog" class="modal d-block"
+                tabindex="-1"
+                t-att-class="{ o_technical_modal: props.technical, o_modal_full: isFullscreen, o_inactive_modal: !data.isActive }"
+                t-ref="modalRef"
+                >
+                <div class="modal-dialog modal-dialog-centered" t-attf-class="modal-{{props.size}}">
+                    <div class="modal-content" t-att-class="props.contentClass" t-att-style="contentStyle">
+                        <header t-if="props.header" class="modal-header">
+                            <t t-slot="header" close="data.close" isFullscreen="isFullscreen">
+                                <t t-call="web.Dialog.header">
+                                    <t t-set="fullscreen" t-value="isFullscreen"/>
+                                    <t t-set="onExpand" t-value="props.onExpand"/>
+                                </t>
+                            </t>
+                        </header>
+                        <main class="modal-body border-top" t-attf-class="{{ props.bodyClass }} {{ !props.withBodyPadding ? 'p-0': '' }}">
+                            <div class="container-fluid" t-ref="content">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="input-group gap-2">
+                                            <input type="text" t-ref="input" class="form-control rounded" disabled="1"/>
+                                            <button class="btn btn-primary rounded copy-btn" t-on-click="() => this.onClickCopy()" type="button" t-att-disabled="state.copying">
+                                                <i t-if="state.copying" class="fa fa-check"/>
+                                                <i t-else="" class="fa fa-clone"/>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-4">
+                                    <div class="col-12">
+                                        <div
+                                            data-snippet="s_share"
+                                            data-name="Share"
+                                            class="s_share text-start o_no_link_popover"
+                                        >
+                                            <h6 class="s_share_title o_default_snippet_text d-block mb-2">Share:</h6>
+                                            <a
+                                                href="https://www.facebook.com/sharer/sharer.php?u={url}"
+                                                target="_blank"
+                                                aria-label="Facebook"
+                                                class="s_share_facebook"
+                                            >
+                                                <i class="fa fa-facebook rounded-circle shadow-sm"/>
+                                            </a>
+                                            <a
+                                                href="https://twitter.com/intent/tweet?text={title}&amp;url={url}"
+                                                target="_blank"
+                                                aria-label="X"
+                                                class="s_share_twitter"
+                                            >
+                                                <i class="fa fa-twitter rounded-circle shadow-sm"/>
+                                            </a>
+                                            <a
+                                                href="https://www.linkedin.com/sharing/share-offsite/?url={url}"
+                                                target="_blank"
+                                                aria-label="LinkedIn"
+                                                class="s_share_linkedin"
+                                            >
+                                                <i class="fa fa-linkedin rounded-circle shadow-sm"/>
+                                            </a>
+                                            <a
+                                                href="https://wa.me/?text={title}"
+                                                target="_blank"
+                                                aria-label="WhatsApp"
+                                                class="s_share_whatsapp"
+                                            >
+                                                <i class="fa fa-whatsapp rounded-circle shadow-sm"/>
+                                            </a>
+                                            <a
+                                                href="https://pinterest.com/pin/create/button/?url={url}&amp;media={media}&amp;description={title}"
+                                                target="_blank"
+                                                aria-label="Pinterest"
+                                                class="s_share_pinterest"
+                                            >
+                                                <i class="fa fa-pinterest rounded-circle shadow-sm"/>
+                                            </a>
+                                            <a
+                                                href="mailto:?body={url}&amp;subject={title}"
+                                                aria-label="Email"
+                                                class="s_share_email"
+                                            >
+                                                <i class="fa fa-envelope rounded-circle shadow-sm"/>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </main>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</templates>

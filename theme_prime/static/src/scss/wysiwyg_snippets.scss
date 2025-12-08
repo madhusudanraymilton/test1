@@ -1,0 +1,14 @@
+.o_add_snippets_preview {
+    .o_snippets_preview_row {
+        .o_snippet_preview_wrap {
+            [data-snippet="s_cover_1"],
+            [data-snippet="s_cover_2"] {
+                height: 680px;
+            }
+            [data-snippet="s_testimonial_3"],
+            [data-snippet="s_testimonial_4"] {
+                height: 430px;
+            }
+        }
+    }
+}

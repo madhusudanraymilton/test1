@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<templates>
+    <div t-name="theme_prime.quick_view_dialog">
+        <div class="o_dialog" t-att-id="id" t-att-class="{ o_inactive_modal: !data.isActive }">
+            <div role="dialog" class="modal d-block"
+                tabindex="-1"
+                t-att-class="{ o_technical_modal: props.technical, o_modal_full: isFullscreen, o_inactive_modal: !data.isActive }"
+                t-ref="modalRef"
+                >
+                <div class="modal-dialog modal-dialog-centered" t-attf-class="modal-{{props.size}} {{ props.isVariantSelector ? 'tp-product-variant-selector-modal-dialog' : '' }}">
+                    <div class="modal-content" t-att-class="props.contentClass" t-att-style="contentStyle">
+                        <main class="modal-body" t-attf-class="{{ props.bodyClass }} {{ !props.withBodyPadding ? 'p-0': '' }}">
+                            <button type="button" class="btn-close position-absolute top-0 end-0 p-3 shadow-none" aria-label="Close" tabindex="-1" t-on-click="dismiss" style="z-index: 1;"></button>
+                            <div t-ref="content" t-out="markup(content)"/>
+                        </main>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</templates>

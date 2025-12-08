@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="theme_prime.TpDropDown">
+        <t t-set="record" t-value="_getRecordByID(this.props.value)"/>
+        <div t-attf-class="#{['templateID', 'priceList'].includes(name) ? ' ' : 'px-2'} w-100">
+            <h6 t-if="title" class="tp-text-body my-3 small"><t t-out="title"/>: </h6>
+            <div t-att-component-name="name" class="dropdown">
+                <button t-attf-class="btn dropdown-toggle #{buttonClasses}" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <t t-call="#{buttonPlaceholder}">
+                        <t t-set="no_funk" t-value="true"/>
+                    </t>
+                </button>
+                <ul t-attf-class="dropdown-menu overflow-auto bg-white tp-dropdown-menu p-0 px-2 tp-rounded-border border w-100 #{menuClass}" style="top:7px !important;">
+                    <t t-foreach="this.props.records" t-as="record" t-key="record.id">
+                        <li t-attf-class="#{menuItemClass}" t-if="record.id">
+                            <a t-on-click="() => this._onClickItem(record.id)" t-attf-class="dropdown-item tp-rounded-border my-2 p-2 text-wrap #{this.props.value === record.id ? 'tp-active-item' : ''}" href="#">
+                                <t t-call="#{dropDownPlaceholder}">
+                                    <t t-set="_is_dropdown_item" t-value="true"/>
+                                </t>
+                            </a>
+                        </li>
+                    </t>
+                </ul>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="theme_prime.tp_dropdown_placeholder">
+        <div class="d-flex align-items-center w-100">
+            <span t-if="record.icon" class="bg-primary d-block m-1 me-3 rounded-circle" style="padding: 13px;">
+                <t t-call="#{record.icon}"><t t-set="hw" t-value="18"/></t>
+            </span>
+            <div t-elif="record.imgSrc" class="flex-shrink-0 me-3">
+                <img t-if="record.imgSrc" t-att-src="record.imgSrc" loading="lazy" class="img tp-rounded-border img-fluid o_image_40_cover"/>
+            </div>
+            <span t-elif="record.symbol" class="flex-shrink-0 me-2 p-2 text-primary border-end bg-primary text-center rounded-circle tp-rounded-circle" style="font-size: 18px;line-height: 20px;">
+                <t t-esc="record.symbol"/>
+            </span>
+            <div class="flex-grow-1 text-start">
+                <p t-att-class="record.icon || record.symbol ? 'd-block text-start small tp-text-body mb-1' : 'mb-0 tp-text-body'" t-out="record.title"/>
+                <p t-if="record.subtitle" t-att-class="record.icon || record.symbol ? 'mb-0 text-capitalize h6 fw-normal text-primary' : 'd-block small mt-1 text-muted mb-1'" t-out="record.subtitle"/>
+            </div>
+            <i class="fa text-primary fa-check-circle me-1" t-if="this.props.value === record.id and !no_funk"/>
+        </div>
+    </t>
+
+    <t t-name="theme_prime.tp_snippet_dropdown_placeholder">
+        <t t-set="resModelData" t-value="this.getResModelData(record.resModel)"/>
+        <i class="fa text-primary fa-check-circle m-3 position-absolute top-0 end-0" t-if="this.props.value === record.id"/>
+        <img t-if="record.imgSrc" t-att-src="record.imgSrc" loading="lazy" class="img tp-rounded-border img-fluid"/>
+        <p class="mb-0 d-flex text-capitalize mt-2 tp-text-body align-items-center justify-content-between">
+            <t t-out="record.subtitle"/> <span t-out="resModelData.title" style="font-size:10px;" t-attf-class="px-2 py-1 fw-light float-end badge-soft-#{resModelData.color}"/>
+        </p>
+    </t>
+
+    <t t-name="theme_prime.tp_pricelist_dropdown_placeholder">
+        <div class="d-flex align-items-center w-100">
+            <span t-if="record.symbol" class="flex-shrink-0 me-2 p-2 text-primary border-end bg-primary text-center rounded-circle" style="height: 35px;width: 35px;font-size: 18px;line-height: 20px;">
+                <t t-esc="record.symbol"/>
+            </span>
+            <div class="flex-grow-1 text-start">
+                <p t-if="record.subtitle" t-att-class="record.icon || record.symbol ? 'mb-0 text-capitalize h6 text-primary' : 'd-block small mt-1 text-muted mb-1'" t-out="record.subtitle"/>
+            </div>
+            <i class="fa text-primary fa-check-circle me-1" t-if="this.props.value === record.id and !no_funk"/>
+        </div>
+    </t>
+</templates>

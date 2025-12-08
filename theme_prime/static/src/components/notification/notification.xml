@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="theme_prime.NotificationGeneric">
+        <div t-on-mouseenter="this.props.freeze" t-on-mouseleave="this.props.refresh" t-attf-class="o_notification {{props.className}} d-flex mb-2 position-relative rounded shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="w-100 tp-rounded-border-lg overflow-hidden">
+                <div class="o_notification_body g-0 row w-100">
+                    <div class="col-9">
+                        <div t-if="props.message" class="p-2 o_notification_content" t-out="props.message"/>
+                    </div>
+                    <div class="col-3 border-start d-flex flex-direction flex-column justify-content-center">
+                        <button t-foreach="props.buttons" t-as="button" type="button" t-key="button_index" t-attf-style="#{button_index ? 'height:calc(50% - 2px) !important' : ''}" t-attf-class="btn w-100 text-muted btn-sm bg-white #{!button_index ? 'border-bottom h-50 fw-bold' : ''}" t-on-click="button.onClick">
+                            <small class="text-uppercase" t-esc="button.name"/>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="DroggolNotification">
+        <div class="row g-0 small align-items-center">
+            <div class="col-3">
+                <div t-attf-class="tp-circle-progress-bar tp-bg-soft-#{color} position-relative rounded-circle o_animate">
+                    <div t-attf-class="text-center w-100 text-#{color} tp-icon d-block position-absolute #{iconClass ? iconClass : 'dri-cart dri'}"></div>
+                    <div class="tp-left-half h-100 w-50 float-start"></div>
+                    <div class="tp-right-half h-100 w-50 float-start"></div>
+                    <span t-attf-class="#{subIconClass ? subIconClass : 'fa fa-check-circle'} text-#{color} bg-white tp-success-icon"/>
+                </div>
+            </div>
+            <div class="col-9 ps-1">
+                <div class="fw-bold text-truncate text-black" t-esc="productName"/>
+                <p class="mb-0 text-500" t-esc="message"/>
+            </div>
+        </div>
+    </t>
+
+</templates>

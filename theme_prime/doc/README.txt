@@ -1,0 +1,1 @@
+The documentation is available at https://odoo-18-doc.web.app/

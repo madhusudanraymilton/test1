@@ -1,0 +1,50 @@
+$border-radius: o-website-value('border-radius');
+$border-radius-sm: o-website-value('border-radius-sm');
+$border-radius-lg: o-website-value('border-radius-lg');
+
+$badge-padding-x: 0.8em;
+$badge-padding-y: 0.6em;
+
+$line-height-base: 1.4;
+$headings-line-height: 1.4;
+
+$tooltip-bg: o-color('dark');
+$tooltip-margin: 0.5rem;
+
+$box-shadow-sm: 0 .125rem .25rem rgba(o-color('black'), .075);
+$box-shadow: 0 .5rem 1rem rgba(o-color('black'), .15);
+$box-shadow-lg: 0 1.5rem 4rem rgba(o-color('black'), .1);
+
+$dropdown-border-width: 0;
+$dropdown-box-shadow: $box-shadow-lg;
+$dropdown-header-color: o-color('primary');
+
+$dropdown-link-hover-color: o-color('primary');
+$dropdown-link-hover-bg: transparent;
+
+$navbar-toggler-focus-width: none;
+
+$pagination-focus-box-shadow: none;
+$pagination-border-width: 0;
+
+$card-border-color: o-color('300');
+
+$lead-font-weight: 400;
+$lead-font-size: $font-size-base * 1.16;
+
+// Forms (Few of them are reverted Odoo design styles)
+$input-bg: $body-bg;
+$input-border-color: o-color('300');
+$input-color: $body-color;
+$input-focus-bg: $input-bg;
+$input-focus-color: $input-color;
+$input-placeholder-color: o-color('500');
+$input-focus-box-shadow: none;
+$input-focus-border-color: o-color('primary');
+
+$form-check-input-border: 1px solid rgba($black, .25);
+$form-range-track-bg: $gray-300;
+$form-check-input-border-radius: 0;
+$form-check-input-focus-box-shadow: none;
+
+$hr-opacity: 0.65;

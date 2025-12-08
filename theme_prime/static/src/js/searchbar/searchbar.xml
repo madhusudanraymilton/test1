@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+<!-- Search Bar autocomplete item -->
+<t t-name="dr_searchbar_pill">
+    <t t-if="1">
+        <li t-if="widget.pill_style == '1'" t-attf-class="list-inline-item me-3 tp-category-pill">
+            <a t-att-href="search_url" class="text-dark text-center h-100 d-flex flex-column justify-content-between align-items-center" t-att-data-type="search_type">
+                <img class="tp-category-img" t-att-src="image_url"/>
+                <h6 class="mb-0 text-truncate small w-100" t-out="search_name"/>
+            </a>
+        </li>
+        <li t-elif="widget.pill_style == '2'" class="list-inline-item me-2 mb-2">
+            <a t-att-href="search_url" class="tp-category-pill d-block rounded-pill h6" t-att-data-type="search_type">
+                <t t-out="search_name"/>
+            </a>
+        </li>
+        <li t-elif="widget.pill_style == '3'" class="list-inline-item me-2">
+            <a t-att-href="search_url" class="d-flex align-items-center py-1 ps-2 pe-3 tp-category-pill h6" t-att-data-type="search_type">
+                <img class="tp-category-img" t-att-src="image_url"/>
+                <span class="mb-0 ms-2" t-out="search_name"/>
+            </a>
+        </li>
+        <li t-elif="widget.pill_style == '4'" class="list-inline-item me-2">
+            <a t-att-href="search_url" class="text-dark d-flex align-items-center rounded-pill p-1 pe-3 mb-2 tp-category-pill" t-att-data-type="search_type">
+                <img class="tp-category-img rounded-circle border" t-att-src="image_url"/>
+                <h6 class="mb-0 ms-2" t-out="search_name"/>
+            </a>
+        </li>
+        <li t-elif="widget.pill_style == '5'" class="list-inline-item me-3">
+            <a t-att-href="search_url" class="text-dark tp-category-pill d-block mb-2" t-att-data-type="search_type">
+                <img class="tp-category-img" t-att-src="image_url"/>
+            </a>
+        </li>
+    </t>
+</t>
+
+<t t-name="website.s_searchbar.autocomplete.droggol">
+
+<t t-set="result" t-value="widget.results"/>
+<t t-set="autocomplete_result" t-value="result.autocomplete.results_count or result.suggestions.results_count" />
+<t t-set="single_column" t-value="widget.single_column" />
+<div t-attf-class="o_dropdown_menu show w-100 p-0 dr_search_autocomplete shadow border rounded #{autocomplete_result and !single_column and 'dr_search_wide' or ''}">
+    <t t-if="fuzzySearch">
+        <div class="dropdown-item-text text-muted border-bottom text-center p-2"><i class="fa fa-exclamation-triangle text-warning" aria-hidden="true"></i> No results found for '<t t-esc="search"/>'. Showing results for '<b><a href="#" class="s_searchbar_fuzzy_submit" t-esc="fuzzySearch"/>'</b>.</div>
+    </t>
+    <t t-elif="!result.result_length">
+        <div class="text-center p-3">
+            <img class="img-fluid img mx-auto" style="max-width:300px;" src="/theme_prime/static/src/img/no_result.png"/>
+            <p class="dropdown-item-text mb-1 text-muted fw-bold">No results found for '<span class="text-primary" t-esc="search"/>'.</p>
+            <small class="d-block mb-3">Please try another search.</small>
+            <a t-attf-href="/shop" class="btn btn-primary-soft btn-sm"> See all products <span class="dri dri-chevron-right-l"></span></a>
+        </div>
+    </t>
+    <div class="row g-0">
+        <div t-if="autocomplete_result" t-attf-class="#{single_column and 'col-md-12 order-2' or 'col-md-4 order-2 order-md-1'} bg-100">
+            <small t-if="result.autocomplete.results_count" class="text-muted d-block pt-2 ps-2 pb-0">
+                <i class="fa fa-circle text-success" style="transform: scale(0.6);"></i> Your search:
+            </small>
+
+            <t t-if="result.autocomplete.results_count">
+                <a t-foreach="result.autocomplete.results" t-as="auto" t-key="auto['website_url']" t-att-href="auto['website_url']" class="dropdown-item text-wrap px-2 dr_item text-wrap" data-type="autocomplete">
+                    <div class="d-flex align-items-center o_search_result_item p-2">
+                        <i class="dri dri-search text-muted" style="margin: 5px;"></i>
+                        <div class="h6 m-0 ms-2" t-out="auto['name']"/>
+                    </div>
+                </a>
+            </t>
+            <small t-if="result.suggestions.results_count" class="text-muted d-block pt-2 ps-2 pb-0 border-top">
+                <i class="fa fa-circle text-warning" style="transform: scale(0.6);"></i> Suggestions: </small>
+            <t t-if="result.suggestions.results_count">
+                <a t-foreach="result.suggestions.results" t-as="suggestion" t-key="suggestion['website_url']" t-att-href="suggestion['website_url']" class="dropdown-item text-wrap px-2 dr_item text-wrap" data-type="suggestion">
+                    <div class="d-flex align-items-center o_search_result_item p-2">
+                        <i class="dri dri-search text-muted" style="margin: 5px;"></i>
+                        <div class="h6 m-0 ms-2" t-out="suggestion['name']"/>
+                    </div>
+                </a>
+            </t>
+        </div>
+        <div t-attf-class="#{autocomplete_result and !single_column and 'col-md-8' or 'col-md-12'} #{single_column and 'order-1' or 'order-1 order-md-2'} border-start">
+            <t t-set="brand_or_category_count" t-value="result.categories.results_count || result.brands.results_count"/>
+            <small t-if="brand_or_category_count" class="text-muted d-block pt-2 ps-2 pb-0">
+                <i class="fa fa-circle text-primary" style="transform: scale(0.6);"></i>
+                <t t-if="result.categories.results_count"> Categories</t>
+                <t t-if="result.categories.results_count and result.brands.results_count"> &amp; </t>
+                <t t-if="result.brands.results_count"> Brands</t>:
+            </small>
+            <ul t-if="brand_or_category_count" t-attf-class="list-inline tp-category-pills-container style-#{widget.pill_style} mb-0 pb-1 mt-2 mx-2">
+                <t t-foreach="result.categories.results" t-as="category" t-key="category_index">
+                    <t t-call="dr_searchbar_pill" t-call-context="{'search_type': 'category', 'search_url': '/shop/category/' + category.id, 'image_url': '/web/image/product.public.category/' + category.id + '/image_128', 'widget': widget, 'search_name': category.name}"></t>
+                </t>
+                <t t-foreach="result.brands.results" t-as="brand" t-key="brand_index">
+                    <t t-call="dr_searchbar_pill" t-call-context="{'search_type': 'brand', 'search_url': '/shop?attribute_value=' + brand.attribute_id + '-' + brand.id, 'image_url': '/web/image/product.attribute.value/' + brand.id + '/dr_image', 'widget': widget, 'search_name': brand.name}"></t>
+                </t>
+            </ul>
+            <hr class="m-0" t-if="brand_or_category_count"/>
+            <small t-if="result.products.results_count or result.autocomplete.results_count" class="text-muted d-block pt-2 ps-2 pb-0">
+                <i class="fa fa-circle text-success" style="transform: scale(0.6);"></i> Products: </small>
+            <t t-if="result.products.results_count">
+                <a t-foreach="result.products.results" t-as="product" t-key="product['website_url']" t-att-href="product['website_url']" class="dropdown-item text-wrap px-2 dr_item" data-type="product">
+                    <div class="d-flex align-items-center o_search_result_item p-2">
+                        <div t-if="product['image_url']" class="flex-shrink-0 me-3">
+                            <img t-att-src="product['image_url']" class="o_image_40_cover"/>
+                        </div>
+                        <i t-else="" t-attf-class="o_image_40_cover text-center pt16 fa #{product['_fa']}" style="font-size: 34px;"/>
+                        <div class="flex-grow-1 px-3">
+                            <t t-set="description" t-value="product['description']"/>
+                            <t t-set="extra_link" t-value="product['extra_link_url'] and product['extra_link']"/>
+                            <t t-set="extra_link_html" t-value="!product['extra_link_url'] and product['extra_link']"/>
+                            <div t-attf-class="h6 #{description ? '' : 'mb-0'}" t-out="product['name']"/>
+                            <p t-if="description" class="mb-0 text-muted" t-out="description"/>
+                            <t t-if="extra_link or extra_link_html">
+                                <button t-if="extra_link" class="extra_link btn btn-link btn-sm" t-att-data-target="product['extra_link_url']" t-out="extra_link"/>
+                                <t t-if="extra_link_html" t-out="extra_link_html"/>
+                            </t>
+                        </div>
+                        <div t-if="!widget.isB2bActive" class="flex-shrink-0">
+                            <t t-if="product['detail_strike']">
+                                <span class="text-muted text-nowrap small" style="text-decoration: line-through;">
+                                    <t t-out="product['detail_strike']"/>
+                                </span>
+                                <br/>
+                            </t>
+                            <b t-if="product['detail']" class="text-nowrap text-primary">
+                                <t t-out="product['detail']"/>
+                            </b>
+                            <t t-if="product['detail_extra']">
+                                <br/>
+                                <span class="text-nowrap" t-out="product['detail_extra']"/>
+                            </t>
+                        </div>
+                    </div>
+                </a>
+            </t>
+        </div>
+        <div class="col-12 order-3 p-2 d-grid border-top" t-if="result.global_match">
+            <a t-att-href="result.global_match['website_url']" class="btn btn-primary-soft" data-type="autocomplete">
+                <div t-attf-class="m-0" t-out="result.global_match['name']"/>
+            </a>
+        </div>
+    </div>
+</div>
+</t>
+
+</templates>

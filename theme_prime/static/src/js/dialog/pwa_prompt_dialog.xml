@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+
+    <div t-name="theme_prime.PWAPromptDialog">
+        <div class="o_dialog" t-att-id="id" t-att-class="{ o_inactive_modal: !data.isActive }">
+            <div role="dialog" class="modal d-block"
+                tabindex="-1"
+                t-att-class="{ o_technical_modal: props.technical, o_modal_full: isFullscreen, o_inactive_modal: !data.isActive }"
+                >
+                <div class="modal-dialog" t-attf-class="modal-{{props.size}}" style="--modal-width: 500px;">
+                    <div class="modal-content" t-att-class="props.contentClass" t-att-style="contentStyle">
+                        <main class="modal-body" t-attf-class="{{ props.bodyClass }} {{ !props.withBodyPadding ? 'p-0': '' }}">
+                            <div class="text-center">
+                                <img height="64" width="64" t-att-alt="props.appName" t-attf-src="/web/image/website/#{props.websiteID}/dr_pwa_icon_192/192x192"/>
+                                <h5 class="my-3">Install <t t-esc="props.appName"/></h5>
+                                <div>Add <t t-esc="props.appName"/> to your home screen for quick and easy access to your shopping anytime, anywhere!</div>
+                                <ul t-if="props.isIOS" class="mb-0 mt-2 text-start">
+                                    <li><div class="d-flex aling-items-center">Tap on <img class="icon" src="/theme_prime/static/src/img/pwa_ios_share.png"/></div></li>
+                                    <li>Select Add to Home Screen</li>
+                                </ul>
+                                <div t-if="props.isIOS" class="grid gap-3 mt-4">
+                                    <div class="g-col-12">
+                                        <button type="button" t-on-click="() => this.onExit()" class="btn btn-primary w-100 d-flex align-items-center justify-content-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" class="bi bi-check-lg me-1" viewBox="0 0 16 16">
+                                                <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z"/>
+                                            </svg>
+                                            Got it
+                                        </button>
+                                    </div>
+                                </div>
+                                <div t-else="" class="grid gap-3 mt-4">
+                                    <div class="g-col-6">
+                                        <button type="button" t-on-click="() => this.onInstall()" class="btn btn-primary w-100 d-flex align-items-center justify-content-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" class="bi bi-download me-1" viewBox="0 0 16 16">
+                                                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
+                                                <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
+                                            </svg>
+                                            Install
+                                        </button>
+                                    </div>
+                                    <div class="g-col-6">
+                                        <button type="button" t-on-click="() => this.onExit()" class="btn btn-light border w-100 d-flex align-items-center justify-content-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" class="bi bi-x-lg me-1" viewBox="0 0 16 16">
+                                                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                                            </svg>
+                                            Dismiss
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </main>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</templates>
