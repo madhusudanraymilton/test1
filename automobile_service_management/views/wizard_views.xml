@@ -1,0 +1,32 @@
+<odoo>
+    <record id="view_service_quotation_wizard_form" model="ir.ui.view">
+        <field name="name">service.quotation.wizard.form</field>
+        <field name="model">service.quotation.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Create Service Quotation" create="false" edit="false">
+                <group>
+                    <field name="partner_id"/>
+                    <field name="vehicle_id" required="1"/>
+                    <field name="service_type"/>
+                    <field name="service_desc"/>
+                    <field name="estimated_cost"/>
+                    <field name="estimated_time"/>
+                </group>
+
+                <footer>
+                    <button name="action_create_quotation" type="object" class="btn-primary" string="Generate Quotation"/>
+                    <button string="Cancel" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Wizard Action -->
+    <record id="action_service_quotation_wizard" model="ir.actions.act_window">
+        <field name="name">Service Quotation</field>
+        <field name="res_model">service.quotation.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

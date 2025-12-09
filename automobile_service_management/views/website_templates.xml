@@ -1,0 +1,31 @@
+<odoo>
+    <template id="website_service_list" name="Service Order List">
+        <t t-call="website.layout">
+            <div class="container mt-5">
+                <h2>Automobile Service Orders</h2>
+                <table class="table table-bordered mt-3">
+                    <thead>
+                        <tr>
+                            <th>Order Name</th>
+                            <th>Vehicle</th>
+                            <th>Customer</th>
+                            <th>Total Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="orders" t-as="o">
+                            <tr>
+                                <td><t t-esc="o.name"/></td>
+                                <td><t t-esc="o.vehicle_id.name"/></td>
+                                <td><t t-esc="o.customer_id.name"/></td>
+                                <td><t t-esc="o.total_amount"/></td>
+                                <td><t t-esc="o.state"/></td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </template>
+</odoo>

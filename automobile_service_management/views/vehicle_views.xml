@@ -1,0 +1,55 @@
+<odoo>
+    <!-- Tree View -->
+    <record id="view_automobile_vehicle_list" model="ir.ui.view">
+        <field name="name">automobile.vehicle.list</field>
+        <field name="model">automobile.vehicle</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="license_plate"/>
+                <field name="brand"/>
+                <field name="model"/>
+                <field name="year"/>
+                <field name="partner_id"/>
+                <field name="odometer"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_automobile_vehicle_form" model="ir.ui.view">
+        <field name="name">automobile.vehicle.form</field>
+        <field name="model">automobile.vehicle</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="license_plate"/>
+                        <field name="vin"/>
+                        <field name="partner_id"/>
+                    </group>
+
+                    <group>
+                        <field name="brand"/>
+                        <field name="model"/>
+                        <field name="year"/>
+                        <field name="color"/>
+                        <field name="odometer"/>
+                    </group>
+
+                    <group>
+                        <field name="image" widget="image"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_automobile_vehicle" model="ir.actions.act_window">
+        <field name="name">Vehicles</field>
+        <field name="res_model">automobile.vehicle</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

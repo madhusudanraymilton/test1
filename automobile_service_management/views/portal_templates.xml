@@ -1,0 +1,31 @@
+<odoo>
+    <template id="portal_service_orders" name="My Service Orders">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-4">
+                <h3>My Automobile Service Orders</h3>
+
+                <table class="table table-hover mt-3">
+                    <thead>
+                        <tr>
+                            <th>Order</th>
+                            <th>Vehicle</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="orders" t-as="o">
+                            <tr>
+                                <td><t t-esc="o.name"/></td>
+                                <td><t t-esc="o.vehicle_id.name"/></td>
+                                <td><t t-esc="o.total_amount"/></td>
+                                <td><t t-esc="o.state"/></td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+
+            </div>
+        </t>
+    </template>
+</odoo>

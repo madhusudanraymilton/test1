@@ -1,0 +1,51 @@
+<odoo>
+    <!-- Tree View -->
+    <record id="view_automobile_customer_list" model="ir.ui.view">
+        <field name="name">automobile.customer.list</field>
+        <field name="model">automobile.customer</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="phone"/>
+                <field name="email"/>
+                <field name="city"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_automobile_customer_form" model="ir.ui.view">
+        <field name="name">automobile.customer.form</field>
+        <field name="model">automobile.customer</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="partner_id"/>
+                        <field name="phone" readonly="1"/>
+                        <field name="email" readonly="1"/>
+                        <field name="city" readonly="1"/>
+                    </group>
+
+                    <group>
+                        <field name="vehicle_ids">
+                            <tree>
+                                <field name="name"/>
+                                <field name="license_plate"/>
+                                <field name="brand"/>
+                                <field name="model"/>
+                            </tree>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_automobile_customer" model="ir.actions.act_window">
+        <field name="name">Customers</field>
+        <field name="res_model">automobile.customer</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

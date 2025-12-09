@@ -1,0 +1,60 @@
+<odoo>
+    <template id="report_service_order">
+        <t t-call="web.external_layout">
+            <div class="page">
+                <h2 style="margin-bottom: 20px;">Automobile Service Order</h2>
+
+                <table class="table table-sm">
+                    <tr>
+                        <td><strong>Order No:</strong></td>
+                        <td><t t-esc="doc.name"/></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Vehicle:</strong></td>
+                        <td><t t-esc="doc.vehicle_id.name"/></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Customer:</strong></td>
+                        <td><t t-esc="doc.customer_id.name"/></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Status:</strong></td>
+                        <td><t t-esc="doc.state"/></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Date:</strong></td>
+                        <td><t t-esc="doc.create_date"/></td>
+                    </tr>
+                </table>
+
+                <h3 style="margin-top: 25px;">Service Details</h3>
+
+                <table class="table table-sm table-bordered" style="margin-top: 10px;">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th style="text-align:right;">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="doc.service_line_ids" t-as="line">
+                            <tr>
+                                <td><t t-esc="line.description"/></td>
+                                <td style="text-align:right;"><t t-esc="line.amount"/></td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+
+                <h3 style="margin-top: 20px; text-align:right;">
+                    Total Amount: <t t-esc="doc.total_amount"/>
+                </h3>
+            </div>
+        </t>
+    </template>
+
+    <!-- Register template with report -->
+    <template id="report_service_order_document">
+        <t t-call="automobile_service_management.report_service_order"/>
+    </template>
+</odoo>

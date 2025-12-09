@@ -1,0 +1,9 @@
+<odoo>
+    <record id="sequence_automobile_service_order" model="ir.sequence">
+        <field name="name">Automobile Service Order</field>
+        <field name="code">automobile.service.order</field>
+        <field name="prefix">SO/</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+</odoo>

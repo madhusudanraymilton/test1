@@ -1,0 +1,31 @@
+<odoo>
+    <!-- Root Menu -->
+    <menuitem id="menu_automobile_root"
+              name="Automobile"
+              sequence="10"
+              groups="automobile_service_management.group_automobile_user"/>
+
+    <!-- Vehicles -->
+    <menuitem id="menu_automobile_vehicle"
+              name="Vehicles"
+              parent="menu_automobile_root"
+              sequence="20"
+              action="action_automobile_vehicle"
+              groups="automobile_service_management.group_automobile_user"/>
+
+    <!-- Customers -->
+    <menuitem id="menu_automobile_customer"
+              name="Customers"
+              parent="menu_automobile_root"
+              sequence="30"
+              action="action_automobile_customer"
+              groups="automobile_service_management.group_automobile_user"/>
+
+    <!-- Service Orders -->
+    <menuitem id="menu_automobile_service_order"
+              name="Service Orders"
+              parent="menu_automobile_root"
+              sequence="40"
+              action="action_automobile_service_order"
+              groups="automobile_service_management.group_automobile_user"/>
+</odoo>

@@ -1,0 +1,10 @@
+<odoo>
+    <!-- REPORT ACTION -->
+    <record id="action_report_service_order" model="ir.actions.report">
+        <field name="name">Service Order Report</field>
+        <field name="model">automobile.service.order</field>
+        <field name="report_name">automobile_service_management.report_service_order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="print_report_name">'Service_Order_' + object.name</field>
+    </record>
+</odoo>

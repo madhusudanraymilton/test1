@@ -1,0 +1,99 @@
+<odoo>
+    <!-- Tree View -->
+    <record id="view_automobile_service_order_list" model="ir.ui.view">
+        <field name="name">automobile.service.order.list</field>
+        <field name="model">automobile.service.order</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="vehicle_id"/>
+                <field name="date_order"/>
+                <field name="total_amount"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_automobile_service_order_form" model="ir.ui.view">
+        <field name="name">automobile.service.order.form</field>
+        <field name="model">automobile.service.order</field>
+        <field name="arch" type="xml">
+            <form string="Service Order">
+                <header>
+
+                    <button name="%(action_service_quotation_wizard)d"
+                            type="action"
+                            class="btn-secondary"
+                            string="New Quotation"/>
+
+                    <button name="%(action_report_service_order)d"
+                            string="Print"
+                            type="action"
+                            class="btn-primary"/>
+
+
+                    <button name="action_confirm" type="object"
+                            string="Confirm" states="draft"
+                            class="btn-primary"/>
+
+                    <button name="action_start" type="object"
+                            string="Start" states="confirmed"
+                            class="btn-secondary"/>
+
+                    <button name="action_done" type="object"
+                            string="Mark Done" states="in_progress"
+                            class="btn-success"/>
+
+                    <button name="action_cancel" type="object"
+                            string="Cancel"
+                            class="btn-danger"
+                            states="draft,confirmed,in_progress"/>
+
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,confirmed,in_progress,done,cancel"/>
+                </header>
+
+                <sheet>
+                    <group>
+                        <field name="name" readonly="1"/>
+                        <field name="partner_id" required="1"/>
+                        <field name="vehicle_id" required="1"/>
+                        <field name="technician_id"/>
+                        <field name="expected_date"/>
+                    </group>
+
+                    <notebook>
+                        <page string="Service Lines">
+                            <field name="line_ids">
+                                <tree editable="bottom">
+                                    <field name="name"/>
+                                    <field name="description"/>
+                                    <field name="qty"/>
+                                    <field name="price_unit"/>
+                                    <field name="subtotal" readonly="1"/>
+                                </tree>
+                            </field>
+                        </page>
+
+                        <page string="Notes">
+                            <field name="note"/>
+                        </page>
+                    </notebook>
+
+                    <group>
+                        <field name="total_amount" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_automobile_service_order" model="ir.actions.act_window">
+        <field name="name">Service Orders</field>
+        <field name="res_model">automobile.service.order</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>
