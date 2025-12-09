@@ -12,6 +12,18 @@
                                 <h2 class="mb-1">Apply for Leave</h2>
                                 <p class="text-muted mb-0">Submit your time-off request</p>
                             </div>
+
+                            <!-- ADD THIS: Team Leader Button -->
+                            <t t-if="is_team_leader">
+                                <a href="/my/leave/team-approvals" class="btn btn-info me-2">
+                                    <i class="fa fa-users"/> Team Approvals
+                                    <t t-if="pending_team_count > 0">
+                                        <span class="badge bg-danger ms-1" t-esc="pending_team_count"/>
+                                    </t>
+                                </a>
+                            </t>
+                            <!-- END ADD -->
+
                             <a href="/my/leave/history" class="btn btn-outline-secondary">
                                 <i class="fa fa-history"/> View History
                             </a>

@@ -15,11 +15,10 @@ class HrLeaveExtended(models.Model):
         tracking=True
     )
 
-    #new
     # ADD NEW FIELDS FOR TEAM LEADER APPROVAL
     state = fields.Selection(
         selection_add=[('team_leader_approval', 'Team Leader Approval')],
-        ondelete={'team_leader_approval': 'set default'}
+        ondelete={'team_leader_approval': lambda recs: recs.write({'state': 'confirm'})}
     )
 
     team_leader_approved = fields.Boolean(
@@ -51,7 +50,6 @@ class HrLeaveExtended(models.Model):
         for leave in self:
             leave.requires_team_leader_approval = bool(leave.employee_id.portal_team_leader_id)
 
-    # ADD NEW METHOD FOR TEAM LEADER APPROVAL
     def action_team_leader_approve(self):
         """Team leader approves the leave request"""
         for leave in self:
@@ -62,6 +60,9 @@ class HrLeaveExtended(models.Model):
             current_employee = self.env['hr.employee'].sudo().search([
                 ('user_id', '=', self.env.user.id)
             ], limit=1)
+
+            if not current_employee:
+                raise ValidationError('No employee record found for current user.')
 
             if current_employee.id != leave.employee_id.portal_team_leader_id.id:
                 raise ValidationError('Only the assigned team leader can approve this request.')
@@ -75,13 +76,15 @@ class HrLeaveExtended(models.Model):
 
             _logger.info(f"Leave {leave.id} approved by team leader {self.env.user.name}")
 
-    # ADD NEW METHOD FOR TEAM LEADER REJECTION
     def action_team_leader_refuse(self):
         """Team leader refuses the leave request"""
         for leave in self:
             current_employee = self.env['hr.employee'].sudo().search([
                 ('user_id', '=', self.env.user.id)
             ], limit=1)
+
+            if not current_employee:
+                raise ValidationError('No employee record found for current user.')
 
             if current_employee.id != leave.employee_id.portal_team_leader_id.id:
                 raise ValidationError('Only the assigned team leader can refuse this request.')
@@ -91,7 +94,6 @@ class HrLeaveExtended(models.Model):
             })
 
             _logger.info(f"Leave {leave.id} refused by team leader {self.env.user.name}")
-    #end new
 
     @api.constrains('employee_id', 'delegate_employee_id')
     def _check_delegate_employee(self):
@@ -101,7 +103,11 @@ class HrLeaveExtended(models.Model):
 
     @api.model
     def search(self, domain, offset=0, limit=None, order=None):
-        """Restrict portal users to see ONLY their own leaves"""
+        """
+        Restrict portal users to see ONLY:
+        1. Their own leaves
+        2. Leaves where they are the team leader
+        """
         if self.env.user.has_group('base.group_portal'):
             # Use direct SQL query to avoid recursion
             self.env.cr.execute("""
@@ -115,7 +121,13 @@ class HrLeaveExtended(models.Model):
 
             if result:
                 employee_id = result[0]
-                domain = ['&', ('employee_id', '=', employee_id)] + (domain or [])
+                # Portal user can see:
+                # 1. Their own leaves (employee_id = current employee)
+                # 2. Leaves where they are team leader (employee_id.portal_team_leader_id = current employee)
+                domain = ['|',
+                          ('employee_id', '=', employee_id),
+                          ('employee_id.portal_team_leader_id', '=', employee_id)
+                          ] + (domain or [])
             else:
                 # No employee record, return empty
                 domain = [('id', '=', False)]
@@ -123,7 +135,10 @@ class HrLeaveExtended(models.Model):
         return super(HrLeaveExtended, self).search(domain, offset=offset, limit=limit, order=order)
 
     def read(self, fields=None, load='_classic_read'):
-        """Prevent portal users from reading others' leave records"""
+        """
+        Prevent portal users from reading others' leave records
+        Allow team leaders to read their team's leaves
+        """
         if self.env.user.has_group('base.group_portal'):
             # Use direct SQL to get employee
             self.env.cr.execute("""
@@ -137,13 +152,20 @@ class HrLeaveExtended(models.Model):
             employee_id = result[0] if result else None
 
             for leave in self:
-                if not employee_id or leave.employee_id.id != employee_id:
-                    raise AccessError("You can only view your own leave requests.")
+                # Check if this is their own leave OR if they are the team leader
+                is_own_leave = employee_id and leave.employee_id.id == employee_id
+                is_team_leader = employee_id and leave.employee_id.portal_team_leader_id.id == employee_id
+
+                if not (is_own_leave or is_team_leader):
+                    raise AccessError("You can only view your own leave requests or your team members' requests.")
 
         return super(HrLeaveExtended, self).read(fields=fields, load=load)
 
     def write(self, vals):
-        """Restrict portal users from modifying approved/refused leaves"""
+        """
+        Restrict portal users from modifying leaves
+        Allow team leaders to approve/refuse their team's leaves
+        """
         if self.env.user.has_group('base.group_portal'):
             # Use direct SQL to get employee
             self.env.cr.execute("""
@@ -157,7 +179,20 @@ class HrLeaveExtended(models.Model):
             employee_id = result[0] if result else None
 
             for leave in self:
-                if leave.state not in ['draft', 'confirm']:
+                # Check if user is team leader for this leave
+                is_team_leader = employee_id and leave.employee_id.portal_team_leader_id.id == employee_id
+
+                if is_team_leader:
+                    # Team leader can only update specific fields
+                    allowed_fields = {'state', 'team_leader_approved', 'team_leader_approved_by',
+                                      'team_leader_approved_date'}
+                    if not set(vals.keys()).issubset(allowed_fields):
+                        raise AccessError("Team leaders can only approve or refuse leave requests.")
+                    # Allow the write
+                    continue
+
+                # For own leaves, check state and ownership
+                if leave.state not in ['draft', 'confirm', 'team_leader_approval']:
                     raise AccessError("You cannot modify approved or refused leave requests.")
 
                 if not employee_id or leave.employee_id.id != employee_id:

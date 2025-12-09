@@ -4,7 +4,6 @@ import logging
 
 _logger = logging.getLogger(__name__)
 
-
 class WizardLinkPortalEmployee(models.TransientModel):
     """
     Wizard to bulk create employee records for portal users
