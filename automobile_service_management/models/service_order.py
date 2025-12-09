@@ -37,7 +37,6 @@ class ServiceOrder(models.Model):
     note = fields.Text(string='Notes')
 
     line_ids = fields.One2many('automobile.service.order.line', 'order_id', string='Services / Parts')
-    service_line_ids = fields.One2many('automobile.service.order.line', 'order_id', string='Service Lines')  # Alias for templates
     total_amount = fields.Monetary(string='Total', compute='_compute_total_amount', store=True)
     currency_id = fields.Many2one('res.currency', string='Currency', default=lambda self: self.env.company.currency_id)
 

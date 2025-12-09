@@ -37,7 +37,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <t t-foreach="doc.service_line_ids" t-as="line">
+                        <t t-foreach="doc.line_ids" t-as="line">
                             <tr>
                                 <td><t t-esc="line.description"/></td>
                                 <td style="text-align:right;"><t t-esc="line.amount"/></td>

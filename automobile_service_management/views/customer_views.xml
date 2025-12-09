@@ -28,13 +28,13 @@
                     </group>
 
                     <group>
-                        <field name="vehicle_ids">
-                            <tree>
+                        <field name="vehicle_ids" widget="one2many_list">
+                            <list>
                                 <field name="name"/>
                                 <field name="license_plate"/>
                                 <field name="brand"/>
                                 <field name="model"/>
-                            </tree>
+                            </list>
                         </field>
                     </group>
                 </sheet>

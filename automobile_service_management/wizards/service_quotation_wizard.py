@@ -40,35 +40,36 @@ class ServiceQuotationWizard(models.TransientModel):
             'line_ids': [],
         }
 
+        if self.estimated_cost <= 0:
+            raise UserError("Please enter a valid estimated cost.")
+
         # Default service lines (example)
         line_values = []
         if self.service_type == 'general':
             line_values.append((0, 0, {
                 'name': 'General Service',
                 'qty': 1,
-                'price_unit': self.estimated_cost or 500
+                'price_unit': self.estimated_cost
             }))
         elif self.service_type == 'engine':
             line_values.append((0, 0, {
                 'name': 'Engine Diagnostics',
                 'qty': 1,
-                'price_unit': self.estimated_cost or 1200
+                'price_unit': self.estimated_cost
             }))
         elif self.service_type == 'ac':
             line_values.append((0, 0, {
                 'name': 'AC System Checkup',
                 'qty': 1,
-                'price_unit': self.estimated_cost or 800
+                'price_unit': self.estimated_cost
             }))
         elif self.service_type == 'electrical':
             line_values.append((0, 0, {
                 'name': 'Electrical Checkup',
                 'qty': 1,
-                'price_unit': self.estimated_cost or 600
+                'price_unit': self.estimated_cost
             }))
         else:
-            if self.estimated_cost <= 0:
-                raise UserError("Please enter estimated cost for 'Other' service type.")
             line_values.append((0, 0, {
                 'name': 'Custom Service',
                 'qty': 1,

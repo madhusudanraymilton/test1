@@ -2,13 +2,13 @@
     <!-- Security Groups -->
     <record id="group_automobile_user" model="res.groups">
         <field name="name">Automobile User</field>
-        <field name="category_id" ref="base.module_category_services"/>
+        <field name="sequence">20</field>
     </record>
 
     <record id="group_automobile_manager" model="res.groups">
         <field name="name">Automobile Manager</field>
         <field name="implied_ids" eval="[(4, ref('automobile_service_management.group_automobile_user'))]"/>
-        <field name="category_id" ref="base.module_category_services"/>
+
     </record>
 
     <!-- Optional: a simple rule example (if you need per-record restrictions later) -->

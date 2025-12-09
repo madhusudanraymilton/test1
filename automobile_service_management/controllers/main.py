@@ -35,7 +35,7 @@ class AutomobileServiceController(http.Controller):
     # ------------------------------------------
     # JSON API → Get All Orders
     # ------------------------------------------
-    @http.route('/api/service/orders', type='json', auth="public")
+    @http.route('/api/service/orders', type='json', auth="user")
     def api_get_orders(self):
         """Public JSON API returning all service orders."""
         orders = request.env['automobile.service.order'].sudo().search([])
@@ -56,7 +56,7 @@ class AutomobileServiceController(http.Controller):
     # ------------------------------------------
     # JSON API → Create Service Order (POST)
     # ------------------------------------------
-    @http.route('/api/service/order/create', type='json', auth="public", methods=['POST'])
+    @http.route('/api/service/order/create', type='json', auth="user", methods=['POST'])
     def api_create_order(self, **payload):
         """Create service order through JSON POST API."""
         try:
@@ -116,7 +116,7 @@ class AutomobileServiceController(http.Controller):
     # ------------------------------------------
     # JSON API → Get Single Order Details
     # ------------------------------------------
-    @http.route('/api/service/order/<int:order_id>', type='json', auth="public")
+    @http.route('/api/service/order/<int:order_id>', type='json', auth="user")
     def api_get_order(self, order_id):
         """Get single order details."""
         try:
