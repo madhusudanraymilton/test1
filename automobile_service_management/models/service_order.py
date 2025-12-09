@@ -11,22 +11,25 @@ class ServiceOrderLine(models.Model):
     description = fields.Text(string='Description')
     qty = fields.Float(string='Quantity', default=1.0)
     price_unit = fields.Monetary(string='Unit Price', currency_field='currency_id', default=0.0)
-    subtotal = fields.Monetary(string='Subtotal', currency_field='currency_id', compute='_compute_subtotal', store=True)
+    amount = fields.Monetary(string='Amount', currency_field='currency_id', compute='_compute_amount', store=True)  # Added for API compatibility
+    subtotal = fields.Monetary(string='Subtotal', currency_field='currency_id', compute='_compute_amount', store=True)
     currency_id = fields.Many2one('res.currency', related='order_id.currency_id', store=True, readonly=True)
 
     @api.depends('qty', 'price_unit')
-    def _compute_subtotal(self):
+    def _compute_amount(self):
         for line in self:
             line.subtotal = line.qty * line.price_unit
+            line.amount = line.subtotal  # Keep both fields in sync
 
 
 class ServiceOrder(models.Model):
     _name = 'automobile.service.order'
     _description = 'Service Order'
-    _inherit = ['mail.thread', 'mail.activity.mixin']  # enables chatter
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     name = fields.Char(string='Order Reference', required=True, copy=False, readonly=True, default='New')
     partner_id = fields.Many2one('res.partner', string='Customer', required=True, ondelete='restrict')
+    customer_id = fields.Many2one('automobile.customer', string='Customer Record', compute='_compute_customer_id', store=True)
     vehicle_id = fields.Many2one('automobile.vehicle', string='Vehicle', required=True, ondelete='restrict')
     date_order = fields.Datetime(string='Order Date', default=fields.Datetime.now)
     expected_date = fields.Datetime(string='Expected Completion')
@@ -34,6 +37,7 @@ class ServiceOrder(models.Model):
     note = fields.Text(string='Notes')
 
     line_ids = fields.One2many('automobile.service.order.line', 'order_id', string='Services / Parts')
+    service_line_ids = fields.One2many('automobile.service.order.line', 'order_id', string='Service Lines')  # Alias for templates
     total_amount = fields.Monetary(string='Total', compute='_compute_total_amount', store=True)
     currency_id = fields.Many2one('res.currency', string='Currency', default=lambda self: self.env.company.currency_id)
 
@@ -46,6 +50,18 @@ class ServiceOrder(models.Model):
     ], string='Status', default='draft', tracking=True)
 
     company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.company)
+
+    @api.depends('partner_id')
+    def _compute_customer_id(self):
+        """Link partner to automobile.customer if exists"""
+        for order in self:
+            if order.partner_id:
+                customer = self.env['automobile.customer'].search([
+                    ('partner_id', '=', order.partner_id.id)
+                ], limit=1)
+                order.customer_id = customer.id if customer else False
+            else:
+                order.customer_id = False
 
     @api.depends('line_ids.subtotal')
     def _compute_total_amount(self):
@@ -69,14 +85,12 @@ class ServiceOrder(models.Model):
             if rec.state not in ('draft', 'confirmed'):
                 raise UserError(_('Only draft/confirmed orders can be started.'))
             rec.state = 'in_progress'
-            # optionally create activity or set started date
 
     def action_done(self):
         for rec in self:
             if rec.state != 'in_progress':
                 raise UserError(_('Only in-progress orders can be marked done.'))
             rec.state = 'done'
-            # example: write final odometer (if provided in note or wizard) or create invoice hook
 
     def action_cancel(self):
         for rec in self:
