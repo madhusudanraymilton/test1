@@ -1,0 +1,72 @@
+<!-- popup.html -->
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      body { font-family: Arial, sans-serif; width: 220px; padding: 12px; }
+      label { display:block; margin-bottom: 8px; }
+      button { margin-top: 8px; padding: 6px 10px; }
+    </style>
+  </head>
+  <body>
+    <h3>ChatGPT Blur</h3>
+    <label>
+      <input id="toggle" type="checkbox" />
+      Enable blur on idle
+    </label>
+    <div>
+      <button id="rescan">Rescan page</button>
+      <button id="open-dev">Open DevTools (for debug)</button>
+    </div>
+
+    <script>
+      const t = document.getElementById('toggle');
+      const rescan = document.getElementById('rescan');
+      const openDev = document.getElementById('open-dev');
+
+      // load saved state
+      chrome.storage.local.get({enabled: true}, (res) => {
+        t.checked = !!res.enabled;
+        // send enable/disable to content script on page(s)
+        chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+          if (!tabs[0]) return;
+          chrome.tabs.sendMessage(tabs[0].id, {type: 'cgpt-blur-set-enabled', enabled: t.checked});
+        });
+      });
+
+      t.addEventListener('change', () => {
+        const enabled = t.checked;
+        chrome.storage.local.set({enabled});
+        chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+          if (!tabs[0]) return;
+          chrome.tabs.sendMessage(tabs[0].id, {type: 'cgpt-blur-set-enabled', enabled});
+        });
+      });
+
+      rescan.addEventListener('click', () => {
+        chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+          if (!tabs[0]) return;
+          chrome.tabs.sendMessage(tabs[0].id, {type: 'cgpt-blur-rescan'});
+        });
+      });
+
+      openDev.addEventListener('click', () => {
+        chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+          if (!tabs[0]) return;
+          chrome.debugger.attach({tabId: tabs[0].id}, '1.3', () => {
+            chrome.debugger.detach({tabId: tabs[0].id});
+            alert('If DevTools are closed, you can open DevTools manually (F12).');
+          });
+        });
+      });
+
+      // receive messages from content script to update UI if needed
+      chrome.runtime.onMessage.addListener((msg) => {
+        if (msg && msg.type === 'cgpt-blur-state') {
+          t.checked = !!msg.enabled;
+        }
+      });
+    </script>
+  </body>
+</html>
