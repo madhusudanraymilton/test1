@@ -303,6 +303,7 @@
             </script>
             -->
             <!-- JavaScript for form validation and interactivity -->
+<!--
 <script type="text/javascript">
     document.addEventListener('DOMContentLoaded', function() {
         const leaveTypeSelect = document.getElementById('leaveTypeSelect');
@@ -431,6 +432,142 @@
                     submitBtn.disabled = true;
                     submitBtn.innerHTML = '&lt;span class="spinner-border spinner-border-sm me-2"&gt;&lt;/span&gt; Submitting...';
                 }
+            });
+        }
+    });
+</script>
+-->
+            <!-- Updated JavaScript for date inputs -->
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        const leaveTypeSelect = document.getElementById('leaveTypeSelect');
+        const dateFrom = document.getElementById('dateFrom');
+        const dateTo = document.getElementById('dateTo');
+        const balanceInfo = document.getElementById('balanceInfo');
+        const durationInfo = document.getElementById('durationInfo');
+        const fileInput = document.getElementById('fileInput');
+        const fileError = document.getElementById('fileError');
+        const form = document.getElementById('leaveForm');
+
+        // Set minimum date to today
+        const today = new Date().toISOString().split('T')[0];
+        if (dateFrom) dateFrom.setAttribute('min', today);
+        if (dateTo) dateTo.setAttribute('min', today);
+
+        // Show balance info when leave type is selected
+        if (leaveTypeSelect) {
+            leaveTypeSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                if (this.value &amp;&amp; balanceInfo) {
+                    const total = selectedOption.getAttribute('data-total') || 0;
+                    const used = selectedOption.getAttribute('data-used') || 0;
+                    const remaining = selectedOption.getAttribute('data-balance') || 0;
+
+                    const totalDaysElem = document.getElementById('totalDays');
+                    const usedDaysElem = document.getElementById('usedDays');
+                    const remainingDaysElem = document.getElementById('remainingDays');
+
+                    if (totalDaysElem) totalDaysElem.textContent = total;
+                    if (usedDaysElem) usedDaysElem.textContent = used;
+                    if (remainingDaysElem) remainingDaysElem.textContent = remaining;
+
+                    balanceInfo.classList.remove('d-none');
+                } else if (balanceInfo) {
+                    balanceInfo.classList.add('d-none');
+                }
+                calculateDuration();
+            });
+        }
+
+        // Calculate duration when dates change
+        if (dateFrom) {
+            dateFrom.addEventListener('change', function() {
+                if (dateTo) dateTo.setAttribute('min', this.value);
+                calculateDuration();
+            });
+        }
+
+        if (dateTo) {
+            dateTo.addEventListener('change', calculateDuration);
+        }
+
+        function calculateDuration() {
+            if (!dateFrom || !dateTo || !durationInfo) return;
+
+            if (dateFrom.value &amp;&amp; dateTo.value) {
+                // Parse dates (YYYY-MM-DD format from date input)
+                const start = new Date(dateFrom.value + 'T00:00:00');
+                const end = new Date(dateTo.value + 'T00:00:00');
+
+                // Calculate difference in days (inclusive)
+                const diffTime = end - start;
+                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+                // Check if duration exceeds balance
+                if (leaveTypeSelect) {
+                    const selectedOption = leaveTypeSelect.options[leaveTypeSelect.selectedIndex];
+                    if (selectedOption &amp;&amp; leaveTypeSelect.value) {
+                        const remaining = parseFloat(selectedOption.getAttribute('data-balance')) || 0;
+                        if (diffDays > remaining) {
+                            durationInfo.classList.remove('bg-info', 'bg-opacity-10');
+                            durationInfo.classList.add('bg-danger', 'bg-opacity-10');
+                            durationInfo.innerHTML = '&lt;i class="fa fa-exclamation-triangle text-danger"&gt;&lt;/i&gt; Warning: Duration (' + diffDays + ' days) exceeds available balance (' + remaining + ' days)';
+                        } else {
+                            durationInfo.classList.remove('bg-danger', 'bg-opacity-10');
+                            durationInfo.classList.add('bg-info', 'bg-opacity-10');
+                            durationInfo.innerHTML = '&lt;i class="fa fa-info-circle text-info"&gt;&lt;/i&gt; Duration: &lt;strong&gt;' + diffDays + '&lt;/strong&gt; days';
+                        }
+                    } else {
+                        // If no leave type selected, just show duration
+                        durationInfo.classList.remove('bg-danger', 'bg-opacity-10');
+                        durationInfo.classList.add('bg-info', 'bg-opacity-10');
+                        durationInfo.innerHTML = '&lt;i class="fa fa-info-circle text-info"&gt;&lt;/i&gt; Duration: &lt;strong&gt;' + diffDays + '&lt;/strong&gt; days';
+                    }
+                }
+
+                durationInfo.classList.remove('d-none');
+            } else {
+                durationInfo.classList.add('d-none');
+            }
+        }
+
+        // File validation
+        if (fileInput &amp;&amp; fileError) {
+            fileInput.addEventListener('change', function() {
+                const file = this.files[0];
+                fileError.classList.add('d-none');
+
+                if (file) {
+                    // Check file size (5MB = 5242880 bytes)
+                    if (file.size > 5242880) {
+                        fileError.textContent = 'File size exceeds 5MB limit';
+                        fileError.classList.remove('d-none');
+                        this.value = '';
+                        return;
+                    }
+
+                    // Check file type
+                    const allowedTypes = ['application/pdf', 'application/msword',
+                                        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                                        'image/jpeg', 'image/jpg', 'image/png'];
+                    if (!allowedTypes.includes(file.type)) {
+                        fileError.textContent = 'Invalid file type. Please upload PDF, DOC, DOCX, JPG, or PNG';
+                        fileError.classList.remove('d-none');
+                        this.value = '';
+                    }
+                }
+            });
+        }
+
+        // Form submission - dates are already in correct format (YYYY-MM-DD)
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                const submitBtn = document.getElementById('submitBtn');
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '&lt;span class="spinner-border spinner-border-sm me-2"&gt;&lt;/span&gt; Submitting...';
+                }
+                // No date conversion needed - browser sends YYYY-MM-DD format
             });
         }
     });

@@ -1,11 +1,11 @@
 from odoo import http
+from odoo.exceptions import ValidationError, UserError, AccessError
 from odoo.http import request
 from datetime import datetime, timedelta
 import base64
 import logging
 
 _logger = logging.getLogger(__name__)
-
 
 class PortalLeaveController(http.Controller):
 
@@ -515,8 +515,13 @@ class PortalLeaveController(http.Controller):
                 return request.redirect('/my/leave/team-approvals?error=This leave is not pending your approval')
 
             # Refuse
-            leave.action_team_leader_refuse()
-            _logger.info(f"✓ Team leader {employee.name} refused leave {leave_id}")
+            try:
+                leave.action_team_leader_refuse()
+            except (UserError, ValidationError, AccessError) as business_error:
+                # These errors occur AFTER action succeeds (e.g. chatter posting)
+                _logger.warning(f"Business warning but leave was refused: {business_error}")
+                pass  # swallow the business exception
+                _logger.info(f"✓ Team leader {employee.name} refused leave {leave_id}")
 
             return request.redirect('/my/leave/team-approvals?success=Leave request refused')
 
