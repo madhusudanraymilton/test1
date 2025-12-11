@@ -3,18 +3,21 @@
   "name": "ChatGPT History Blur on Idle",
   "description": "Blurs or hides ChatGPT conversation history when the mouse is not hovering it.",
   "version": "1.0",
-  "permissions": ["scripting", "storage"],
-  "host_permissions": ["https://chat.openai.com/*"],
+  "permissions": ["scripting", "storage", "activeTab"],
+  "host_permissions": ["https://chat.openai.com/*", "https://chatgpt.com/*"],
   "action": {
     "default_title": "ChatGPT Blur",
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_icon": {
+
+    }
   },
   "background": {
     "service_worker": "background.js"
   },
   "content_scripts": [
     {
-      "matches": ["https://chat.openai.com/*"],
+      "matches": ["https://chat.openai.com/*", "https://chatgpt.com/*"],
       "js": ["content.js"],
       "run_at": "document_idle"
     }
